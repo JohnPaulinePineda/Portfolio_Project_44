@@ -188,6 +188,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+import matplotlib.cm as cm
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 %matplotlib inline
 import tensorflow as tf
@@ -218,7 +219,7 @@ from keras.utils.np_utils import to_categorical
 from keras.optimizers import Adam, SGD
 from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
-from tensorflow.keras.utils import img_to_array, array_to_img
+from tensorflow.keras.utils import img_to_array, array_to_img, load_img
 ```
 
 
@@ -783,7 +784,7 @@ n_samples = 5
 fig, m_axs = plt.subplots(3, n_samples, figsize = (3*n_samples, 8))
 for n_axs, (type_name, type_rows) in zip(m_axs, xray_images.sort_values(['Diagnosis']).groupby('Diagnosis')):
     n_axs[2].set_title(type_name, fontsize = 14, weight = 'bold')
-    for c_ax, (_, c_row) in zip(n_axs, type_rows.sample(n_samples, random_state=1).iterrows()):       
+    for c_ax, (_, c_row) in zip(n_axs, type_rows.sample(n_samples, random_state=12345).iterrows()):       
         picture = c_row['Path']
         image = cv2.imread(picture)
         c_ax.imshow(image)
@@ -1063,7 +1064,7 @@ fig, axes = plt.subplots(1, 5, figsize=(15, 3))
 for i in range(5):
     batch = next(train_gen)
     images, labels = batch
-    axes[i].imshow(images[0])  # Display the first image in the batch
+    axes[i].imshow(images[0]) 
     axes[i].set_title(f"Label: {labels[0]}")
     axes[i].axis('off')
 plt.show()
@@ -1292,7 +1293,7 @@ scatterplot.fig.tight_layout()
 def getImage(path):
     return OffsetImage(cv2.imread(path),zoom = 0.1)
 
-DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=1)
+DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=12345)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1330,7 +1331,7 @@ imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
 def getImage(path_covid):
     return OffsetImage(cv2.imread(path_covid),zoom = 0.1)
 
-DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=1)
+DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=12345)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1368,7 +1369,7 @@ imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
 def getImage(path_viral_pneumonia):
     return OffsetImage(cv2.imread(path_viral_pneumonia),zoom = 0.1)
 
-DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=1)
+DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=12345)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1406,7 +1407,7 @@ imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
 def getImage(path_normal):
     return OffsetImage(cv2.imread(path_normal),zoom = 0.1)
 
-DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=1)
+DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=12345)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1691,7 +1692,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 81ms/step
+    45/45 [==============================] - 4s 77ms/step
     
 
 
@@ -2092,7 +2093,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 83ms/step
+    45/45 [==============================] - 4s 79ms/step
     
 
 
@@ -2503,7 +2504,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 85ms/step
+    45/45 [==============================] - 4s 90ms/step
     
 
 
@@ -2929,7 +2930,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 90ms/step
+    45/45 [==============================] - 4s 95ms/step
     
 
 
@@ -3520,7 +3521,8 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 ##################################
 # Visualizing the learned and updated filters
 # for the first convolutional layer
-# from the selected CNN model
+# from the selected CNN model defined as
+# CNN with batch normalization regularization
 ##################################
 conv2d_0_filters, conv2d_0_biases = model_bnr.layers[0].get_weights()
 plt.figure(figsize=(10, 6))
@@ -3542,7 +3544,8 @@ plt.show()
 ##################################
 # Visualizing the learned and updated filters
 # for the second convolutional layer
-# from the selected CNN model
+# from the selected CNN model defined as
+# CNN with batch normalization regularization
 ##################################
 conv2d_1_filters, conv2d_1_biases = model_bnr.layers[2].get_weights()
 plt.figure(figsize=(10, 12))
@@ -3560,6 +3563,378 @@ plt.show()
 
 
 #### 1.3.7.2 Gradient-Weighted Class Activation Mapping <a class="anchor" id="1.3.7.2"></a>
+
+
+```python
+##################################
+# Gathering the actual and predicted classes
+# from the selected CNN model defined as
+# CNN with batch normalization regularization
+##################################
+model_bnr_predictions = np.array(list(map(lambda x: np.argmax(x), model_bnr_y_pred)))
+model_bnr_y_true = test_gen.classes
+```
+
+
+```python
+##################################
+# Consolidating the actual and predicted classes
+# from the selected CNN model defined as
+# CNN with batch normalization regularization
+##################################
+class_indices = test_gen.class_indices
+indices = {v:k for k,v in class_indices.items()}
+filenames = test_gen.filenames
+test_gen_df = pd.DataFrame()
+test_gen_df['FileName'] = filenames
+test_gen_df['Actual_Category'] = model_bnr_y_true
+test_gen_df['Predicted_Category'] = model_bnr_predictions
+test_gen_df['Actual_Category'] = test_gen_df['Actual_Category'].apply(lambda x: indices[x])
+test_gen_df['Predicted_Category'] = test_gen_df['Predicted_Category'].apply(lambda x: indices[x])
+test_gen_df.loc[test_gen_df['Actual_Category']==test_gen_df['Predicted_Category'],'Matched_Category_Prediction'] = True
+test_gen_df.loc[test_gen_df['Actual_Category']!=test_gen_df['Predicted_Category'],'Matched_Category_Prediction'] = False
+test_gen_df.head(10)
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>FileName</th>
+      <th>Actual_Category</th>
+      <th>Predicted_Category</th>
+      <th>Matched_Category_Prediction</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>COVID\COVID-1.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>COVID\COVID-10.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>COVID\COVID-100.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>COVID\COVID-1000.png</td>
+      <td>COVID</td>
+      <td>Viral Pneumonia</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>COVID\COVID-1001.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>COVID\COVID-1002.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>COVID\COVID-1003.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>COVID\COVID-1004.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>COVID\COVID-1005.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>COVID\COVID-1006.png</td>
+      <td>COVID</td>
+      <td>COVID</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+
+```python
+##################################
+# Formulating image samples
+# from the validation set
+##################################
+test_gen_df = test_gen_df.sample(frac=1, replace=False, random_state=12345).reset_index(drop=True)
+```
+
+
+```python
+##################################
+# Defining a function
+# to load the sampled images
+##################################
+img_size=299
+def readImage(path):
+    img = load_img(path,color_mode="grayscale", target_size=(img_size,img_size))
+    img = img_to_array(img)
+    img = img/255.    
+    return img
+```
+
+
+```python
+##################################
+# Defining a function
+# to display the sampled images
+# with the actual and predicted categories
+##################################
+def display_images(temp_df):
+    temp_df = temp_df.reset_index(drop=True)
+    plt.figure(figsize = (20 , 20))
+    n = 0
+    for i in range(15):
+        n+=1
+        plt.subplot(5 , 5, n)
+        plt.subplots_adjust(hspace = 0.5 , wspace = 0.3)
+        image = readImage(f"C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/{temp_df.FileName[i]}")
+        plt.imshow(image)
+        plt.title(f'A: {temp_df.Actual_Category[i]} P: {temp_df.Predicted_Category[i]}')        
+```
+
+
+```python
+##################################
+# Display sample images with matched
+# actual and predicted categories
+##################################
+display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']==True])
+```
+
+
+    
+![png](output_142_0.png)
+    
+
+
+
+```python
+##################################
+# Display sample images with mismatched
+# actual and predicted categories
+##################################
+display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']!=True])
+```
+
+
+    
+![png](output_143_0.png)
+    
+
+
+
+```python
+##################################
+# Defining a function
+# to gather the model layer information
+# and formulate the gradient class activation map
+##################################
+def make_gradcam_heatmap(img_array, model, pred_index=None):
+    
+    grad_model = Model(inputs=model.inputs, outputs=[model.layers[2].output, model.output])
+
+    with tf.GradientTape() as tape:
+        last_conv_layer_output, preds = grad_model(img_array)
+        if pred_index is None:
+            pred_index = tf.argmax(preds[0])
+        class_channel = preds[:, pred_index]
+
+    grads = tape.gradient(class_channel, last_conv_layer_output)
+
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+
+    last_conv_layer_output = last_conv_layer_output[0]
+    heatmap = last_conv_layer_output @ pooled_grads[..., tf.newaxis]
+    heatmap = tf.squeeze(heatmap)
+
+    heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
+    return heatmap.numpy(), preds
+```
+
+
+```python
+##################################
+# Defining a function
+# to colorize the generated heatmap
+# and superimpose on the actual image
+##################################
+def gradCAMImage(image):
+    path = f"C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/{image}"
+    img = readImage(path)
+    img = np.expand_dims(img,axis=0)
+    heatmap, preds = make_gradcam_heatmap(img, model_bnr)
+
+    img = load_img(path)
+    img = img_to_array(img)
+    heatmap = np.uint8(255 * heatmap)
+
+    jet = cm.get_cmap("jet")
+
+    jet_colors = jet(np.arange(256))[:, :3]
+    jet_heatmap = jet_colors[heatmap]
+
+    jet_heatmap = tf.keras.preprocessing.image.array_to_img(jet_heatmap)
+    jet_heatmap = jet_heatmap.resize((img.shape[1], img.shape[0]))
+    jet_heatmap = tf.keras.preprocessing.image.img_to_array(jet_heatmap)
+
+    superimposed_img = jet_heatmap * 0.8 + img
+    superimposed_img = tf.keras.preprocessing.image.array_to_img(superimposed_img)
+    
+    return superimposed_img
+```
+
+
+```python
+##################################
+# Defining a function to consolidate
+# the gradient class activation maps
+# for a subset of sampled images
+##################################
+def gradcam_of_images(correct_class):
+    grad_images = []
+    title = []
+    temp_df = test_gen_df[test_gen_df['Matched_Category_Prediction']==correct_class]
+    temp_df = temp_df.reset_index(drop=True)
+    for i in range(15):
+        image = temp_df.FileName[i]
+        grad_image = gradCAMImage(image)
+        grad_images.append(grad_image)
+        title.append(f"A: {temp_df.Actual_Category[i]} P: {temp_df.Predicted_Category[i]}")
+
+    return grad_images, title
+```
+
+
+```python
+##################################
+# Consolidating the gradient class activation maps
+# for the subset of sampled images
+# with matched actual and predicted categories
+##################################
+matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
+```
+
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_6496\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+      jet = cm.get_cmap("jet")
+    
+
+
+```python
+##################################
+# Consolidating the gradient class activation maps
+# for the subset of sampled images
+# with mismatched actual and predicted categories
+##################################
+mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
+```
+
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_6496\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+      jet = cm.get_cmap("jet")
+    
+
+
+```python
+##################################
+# Defining a function to display
+# the consolidated gradient class activation maps
+# for a subset of sampled images
+##################################
+def display_heatmaps(classified_images, titles):
+    plt.figure(figsize = (20 , 20))
+    n = 0
+    for i in range(15):
+        n+=1
+        plt.subplot(5 , 5, n)
+        plt.subplots_adjust(hspace = 0.5 , wspace = 0.3)
+        plt.imshow(classified_images[i])
+        plt.title(titles[i])
+    plt.show()
+```
+
+
+```python
+##################################
+# Displaying the consolidated 
+# gradient class activation maps
+# for the subset of sampled images
+# with matched actual and predicted categories
+##################################
+display_heatmaps(matched_categories, matched_categories_titles)
+```
+
+
+    
+![png](output_150_0.png)
+    
+
+
+
+```python
+##################################
+# Displaying the consolidated 
+# gradient class activation maps
+# for the subset of sampled images
+# with mismatched actual and predicted categories
+##################################
+display_heatmaps(mismatched_categories, mismatched_categories_titles)
+```
+
+
+    
+![png](output_151_0.png)
+    
+
 
 # 2. Summary <a class="anchor" id="Summary"></a>
 
