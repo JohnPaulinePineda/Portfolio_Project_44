@@ -2,7 +2,7 @@
 # Supervised Learning : Learning Hierarchical Features for Predicting Multiclass X-Ray Images using Convolutional Neural Network Model Variations
 
 ***
-### John Pauline Pineda <br> <br> *January 6, 2024*
+### John Pauline Pineda <br> <br> *January 9, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -784,7 +784,7 @@ n_samples = 5
 fig, m_axs = plt.subplots(3, n_samples, figsize = (3*n_samples, 8))
 for n_axs, (type_name, type_rows) in zip(m_axs, xray_images.sort_values(['Diagnosis']).groupby('Diagnosis')):
     n_axs[2].set_title(type_name, fontsize = 14, weight = 'bold')
-    for c_ax, (_, c_row) in zip(n_axs, type_rows.sample(n_samples, random_state=12345).iterrows()):       
+    for c_ax, (_, c_row) in zip(n_axs, type_rows.sample(n_samples, random_state=123).iterrows()):       
         picture = c_row['Path']
         image = cv2.imread(picture)
         c_ax.imshow(image)
@@ -1293,7 +1293,7 @@ scatterplot.fig.tight_layout()
 def getImage(path):
     return OffsetImage(cv2.imread(path),zoom = 0.1)
 
-DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=12345)
+DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=123)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1331,7 +1331,7 @@ imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
 def getImage(path_covid):
     return OffsetImage(cv2.imread(path_covid),zoom = 0.1)
 
-DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=12345)
+DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=123)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1369,7 +1369,7 @@ imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
 def getImage(path_viral_pneumonia):
     return OffsetImage(cv2.imread(path_viral_pneumonia),zoom = 0.1)
 
-DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=12345)
+DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=123)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1407,7 +1407,7 @@ imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
 def getImage(path_normal):
     return OffsetImage(cv2.imread(path_normal),zoom = 0.1)
 
-DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=12345)
+DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=123)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
@@ -1692,7 +1692,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 77ms/step
+    45/45 [==============================] - 4s 92ms/step
     
 
 
@@ -2093,7 +2093,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 79ms/step
+    45/45 [==============================] - 4s 88ms/step
     
 
 
@@ -2504,7 +2504,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 90ms/step
+    45/45 [==============================] - 4s 86ms/step
     
 
 
@@ -2930,7 +2930,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 95ms/step
+    45/45 [==============================] - 4s 85ms/step
     
 
 
@@ -3516,6 +3516,9 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 
 #### 1.3.7.1 Convolutional Layer Filter Visualization <a class="anchor" id="1.3.7.1"></a>
 
+1. The visualized filters using the first convolutional layer of the selection model - **CNN Model With Batch Normalization Regularization** showed low-level features including edges and textures.
+2. The visualized filters using the second and final convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** showed mid-level features including patterns and shapes.
+
 
 ```python
 ##################################
@@ -3563,6 +3566,31 @@ plt.show()
 
 
 #### 1.3.7.2 Gradient-Weighted Class Activation Mapping <a class="anchor" id="1.3.7.2"></a>
+
+1. The gradient-weighted class activation map for  the first convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** highlighted general image features that lead to the activation of the different image categories.
+    * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
+        * 1.1.1 Denser intensity for the part of the image pertaining to the lung
+        * 1.1.2 Relatively invisible outlines for the part of the image pertaining to the thorax
+    * 1.2 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
+        * 1.2.1 Denser intensity for the part of the image pertaining to the lung
+        * 1.2.2 Clearly visible outlines for the part of the image pertaining to the thorax
+    * 1.3 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
+        * 1.3.1 Hazy intensity for the part of the image pertaining to the lung
+        * 1.3.2 Relatively visible outlines for the part of the image pertaining to the thorax
+2. The gradient-weighted class activation map for  the second and final convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** highlighted specific image features that lead to the activation of the different image categories.
+    * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
+        * 1.1.1 Lung fields appeared patchy and multifocal
+        * 1.1.2 Pulmonary vessels and bronchial structures are not clearly invisible with signs of obstruction or infiltration
+        * 1.1.3 Both lungs appear generally asymmetrical in size and density
+    * 1.2 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
+        * 1.2.1 Clear lung fields without significant opacities or consolidations
+        * 1.2.2 Pulmonary vessels and bronchial structures are clearly visible without signs of obstruction or infiltration
+        * 1.2.3 Both lungs appear generally symmetrical in size and density
+    * 1.3 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
+        * 1.3.1 Lung fields appeared patchy and multifocal
+        * 1.3.2 Pulmonary vessels and bronchial structures are clearly visible but with signs of obstruction or infiltration
+        * 1.3.3 Both lungs appear generally symmetrical in size and density
+
 
 
 ```python
@@ -3706,7 +3734,7 @@ test_gen_df.head(10)
 # Formulating image samples
 # from the validation set
 ##################################
-test_gen_df = test_gen_df.sample(frac=1, replace=False, random_state=12345).reset_index(drop=True)
+test_gen_df = test_gen_df.sample(frac=1, replace=False, random_state=123).reset_index(drop=True)
 ```
 
 
@@ -3779,10 +3807,11 @@ display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']!=True])
 # Defining a function
 # to gather the model layer information
 # and formulate the gradient class activation map
+# from the output of the first convolutional layer
 ##################################
 def make_gradcam_heatmap(img_array, model, pred_index=None):
     
-    grad_model = Model(inputs=model.inputs, outputs=[model.layers[2].output, model.output])
+    grad_model = Model(inputs=model.inputs, outputs=[model.layers[0].output, model.output])
 
     with tf.GradientTape() as tape:
         last_conv_layer_output, preds = grad_model(img_array)
@@ -3859,13 +3888,14 @@ def gradcam_of_images(correct_class):
 ```python
 ##################################
 # Consolidating the gradient class activation maps
+# from the output of the first convolutional layer
 # for the subset of sampled images
 # with matched actual and predicted categories
 ##################################
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_6496\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -3873,13 +3903,14 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 ```python
 ##################################
 # Consolidating the gradient class activation maps
+# from the output of the first convolutional layer
 # for the subset of sampled images
 # with mismatched actual and predicted categories
 ##################################
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_6496\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -3907,6 +3938,7 @@ def display_heatmaps(classified_images, titles):
 ##################################
 # Displaying the consolidated 
 # gradient class activation maps
+# from the output of the first convolutional layer
 # for the subset of sampled images
 # with matched actual and predicted categories
 ##################################
@@ -3924,6 +3956,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 ##################################
 # Displaying the consolidated 
 # gradient class activation maps
+# from the output of the first convolutional layer
 # for the subset of sampled images
 # with mismatched actual and predicted categories
 ##################################
@@ -3933,6 +3966,102 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
     
 ![png](output_151_0.png)
+    
+
+
+
+```python
+##################################
+# Defining a function
+# to gather the model layer information
+# and formulate the gradient class activation map
+# from the output of the second convolutional layer
+##################################
+def make_gradcam_heatmap(img_array, model, pred_index=None):
+    
+    grad_model = Model(inputs=model.inputs, outputs=[model.layers[2].output, model.output])
+
+    with tf.GradientTape() as tape:
+        last_conv_layer_output, preds = grad_model(img_array)
+        if pred_index is None:
+            pred_index = tf.argmax(preds[0])
+        class_channel = preds[:, pred_index]
+
+    grads = tape.gradient(class_channel, last_conv_layer_output)
+
+    pooled_grads = tf.reduce_mean(grads, axis=(0, 1, 2))
+
+    last_conv_layer_output = last_conv_layer_output[0]
+    heatmap = last_conv_layer_output @ pooled_grads[..., tf.newaxis]
+    heatmap = tf.squeeze(heatmap)
+
+    heatmap = tf.maximum(heatmap, 0) / tf.math.reduce_max(heatmap)
+    return heatmap.numpy(), preds
+```
+
+
+```python
+##################################
+# Consolidating the gradient class activation maps
+# from the output of the second convolutional layer
+# for the subset of sampled images
+# with matched actual and predicted categories
+##################################
+matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
+```
+
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+      jet = cm.get_cmap("jet")
+    
+
+
+```python
+##################################
+# Consolidating the gradient class activation maps
+# from the output of the second convolutional layer
+# for the subset of sampled images
+# with mismatched actual and predicted categories
+##################################
+mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
+```
+
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+      jet = cm.get_cmap("jet")
+    
+
+
+```python
+##################################
+# Displaying the consolidated 
+# gradient class activation maps
+# from the output of the second convolutional layer
+# for the subset of sampled images
+# with matched actual and predicted categories
+##################################
+display_heatmaps(matched_categories, matched_categories_titles)
+```
+
+
+    
+![png](output_155_0.png)
+    
+
+
+
+```python
+##################################
+# Displaying the consolidated 
+# gradient class activation maps
+# from the output of the second convolutional layer
+# for the subset of sampled images
+# with mismatched actual and predicted categories
+##################################
+display_heatmaps(mismatched_categories, mismatched_categories_titles)
+```
+
+
+    
+![png](output_156_0.png)
     
 
 
@@ -3997,6 +4126,8 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 * **[Article]** [Convolutional Neural Networks (CNNs) and Layer Types](https://pyimagesearch.com/2021/05/14/convolutional-neural-networks-cnns-and-layer-types/) by Adrian Rosebrock (PyImageSearch)
 * **[Article]** [How Convolutional Neural Networks See The World](https://blog.keras.io/how-convolutional-neural-networks-see-the-world.html) by Francois Chollet (The Keras Blog)
 * **[Article]** [What Is a Convolutional Neural Network?](https://www.mathworks.com/discovery/convolutional-neural-network-matlab.html#:~:text=A%20convolutional%20neural%20network%20(CNN,%2Dseries%2C%20and%20signal%20data.) by MathWorks Team (MathWorks)
+* **[Article]** [Grad-CAM Class Activation Visualization](https://keras.io/examples/vision/grad_cam/) by Francois Chollet (Keras.IO)
+* **[Article]** [Grad-CAM: Visualize Class Activation Maps with Keras, TensorFlow, and Deep Learning](https://pyimagesearch.com/2020/03/09/grad-cam-visualize-class-activation-maps-with-keras-tensorflow-and-deep-learning/) by Adrian Rosebrock (PyImageSearch)
 * **[Kaggle Project]** [Covid 19 Radiography Data - EDA and CNN Model](https://www.kaggle.com/code/jnegrini/covid-19-radiography-data-eda-and-cnn-model) by Juliana Negrini De Araujo (Kaggle)
 * **[Kaggle Project]** [Pneumonia Detection using CNN (92.6% Accuracy)](https://www.kaggle.com/code/madz2000/pneumonia-detection-using-cnn-92-6-accuracy) by Madhav Mathur (Kaggle)
 * **[Kaggle Project]** [COVID Detection from CXR Using Explainable CNN](https://www.kaggle.com/code/sid321axn/covid-detection-from-cxr-using-explainable-cnn) by Manu Siddhartha (Kaggle)
@@ -4008,8 +4139,12 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 * **[Kaggle Project]** [X-ray Detecting Using CNN](https://www.kaggle.com/code/shivan118/x-ray-detecting-using-cnn) by Shivan Kumar (Kaggle)
 * **[Kaggle Project]** [Classification of COVID-19 using CNN](https://www.kaggle.com/code/islamselim/classification-of-covid-19-using-cnn) by Islam Selim (Kaggle)
 * **[Kaggle Project]** [COVID-19 - Revisiting Pneumonia Detection](https://www.kaggle.com/code/pcbreviglieri/covid-19-revisiting-pneumonia-detection) by Paulo Breviglieri (Kaggle)
-* **[Kaggle Project]** [Multi-Class X-ray Covid19 Classification-94% Accurary](https://www.kaggle.com/code/derrelldsouza/multi-class-x-ray-covid19-classification-94-acc) by Derrel Souza (Kaggle)
+* **[Kaggle Project]** [Multi-Class X-ray Covid19 Classification-94% Accurary](https://www.kaggle.com/code/derrelldsouza/multi-class-x-ray-covid19-classification-94-acc) by Quadeer Shaikh (Kaggle)
+* **[Kaggle Project]** [Grad-CAM: What Do CNNs See?](https://www.kaggle.com/code/quadeer15sh/grad-cam-what-do-cnns-see) by Derrel Souza (Kaggle)
+* **[GitHub Project]** [Grad-CAM](https://github.com/ismailuddin/gradcam-tensorflow-2/blob/master/notebooks/GradCam.ipynb) by Ismail Uddin (GitHub)
 * **[Publication]** [Gradient-Based Learning Applied to Document Recognition](https://ieeexplore.ieee.org/document/726791) by Yann LeCun, Leon Bottou, Yoshua Bengio and Patrick Haffner (Proceedings of the IEEE)
+* **[Publication]** [Learning Deep Features for Discriminative Localization](https://arxiv.org/abs/1512.04150) by Bolei Zhou, Aditya Khosla, Agata Lapedriza, Aude Oliva and Antonio Torralba (Computer Vision and Pattern Recognition)
+* **[Publication]** [Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization](https://arxiv.org/abs/1610.02391) by Ramprasaath Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh and Dhruv Batra (Computer Vision and Pattern Recognition)
 
 
 
