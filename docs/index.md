@@ -89,10 +89,7 @@ The hierarchical representation of image features enables the network to transfo
 * <span style="color: #FF0000">LOW-LEVEL FEATURES</span> - Edges and textures
 * <span style="color: #FF0000">MID-LEVEL FEATURES</span> - Patterns and shapes
 * <span style="color: #FF0000">HIGH-LEVEL FEATURES</span> - Object parts
-* <span style="color: #FF0000">ABSTRACT FEATURES</span> - Object semantics
-* <span style="color: #FF0000">SEMANTIC CONCEPTS</span> - Object categories
 * <span style="color: #FF0000">HIERARCHICAL REPRESENTATION</span> - Spatial hierarchy
-* <span style="color: #FF0000">ROTATION | SCALE INVARIANCE</span> - Invariant features
 * <span style="color: #FF0000">LOCALIZATION INFORMATION</span> - Spatial localization
 
 
@@ -1173,16 +1170,100 @@ imageEDA['Min'] = min_val
 
 ```python
 ##################################
+# Consolidating the overall mean
+# for the pixel intensity means
+# grouped by categories
+##################################
+imageEDA.groupby(['Class'])['Mean'].mean()
+```
+
+
+
+
+    Class
+    Covid-19           143.712634
+    Healthy            122.619439
+    Viral Pneumonia    125.310461
+    Name: Mean, dtype: float64
+
+
+
+
+```python
+##################################
+# Consolidating the overall minimum
+# for the pixel intensity means
+# grouped by categories
+##################################
+imageEDA.groupby(['Class'])['Mean'].min()
+```
+
+
+
+
+    Class
+    Covid-19           46.677511
+    Healthy            73.304356
+    Viral Pneumonia    64.771022
+    Name: Mean, dtype: float64
+
+
+
+
+```python
+##################################
+# Consolidating the overall maximum
+# for the pixel intensity means
+# grouped by categories
+##################################
+imageEDA.groupby(['Class'])['Mean'].max()
+```
+
+
+
+
+    Class
+    Covid-19           216.570667
+    Healthy            175.906667
+    Viral Pneumonia    179.011911
+    Name: Mean, dtype: float64
+
+
+
+
+```python
+##################################
+# Consolidating the overall standard deviation
+# for the pixel intensity means
+# grouped by categories
+##################################
+imageEDA.groupby(['Class'])['Mean'].std()
+```
+
+
+
+
+    Class
+    Covid-19           22.160832
+    Healthy            13.716765
+    Viral Pneumonia    19.052677
+    Name: Mean, dtype: float64
+
+
+
+
+```python
+##################################
 # Formulating the mean distribution
 # by category of the image pixel values
 ##################################
 sns.displot(data = imageEDA, x = 'Mean', kind="kde", hue = 'Class', height=6, aspect=1.40)
-plt.title('Image Pixel Mean Distribution by Category', fontsize=14, weight='bold');
+plt.title('Image Pixel Intensity Mean Distribution by Category', fontsize=14, weight='bold');
 ```
 
 
     
-![png](output_60_0.png)
+![png](output_64_0.png)
     
 
 
@@ -1193,12 +1274,12 @@ plt.title('Image Pixel Mean Distribution by Category', fontsize=14, weight='bold
 # by category of the image pixel values
 ##################################
 sns.displot(data = imageEDA, x = 'Max', kind="kde", hue = 'Class', height=6, aspect=1.40)
-plt.title('Image Pixel Maximum Distribution by Category', fontsize=14, weight='bold');
+plt.title('Image Pixel Intensity Maximum Distribution by Category', fontsize=14, weight='bold');
 ```
 
 
     
-![png](output_61_0.png)
+![png](output_65_0.png)
     
 
 
@@ -1209,12 +1290,12 @@ plt.title('Image Pixel Maximum Distribution by Category', fontsize=14, weight='b
 # by category of the image pixel values
 ##################################
 sns.displot(data = imageEDA, x = 'Min', kind="kde", hue = 'Class', height=6, aspect=1.40)
-plt.title('Image Pixel Minimum Distribution by Category', fontsize=14, weight='bold');
+plt.title('Image Pixel Intensity Minimum Distribution by Category', fontsize=14, weight='bold');
 ```
 
 
     
-![png](output_62_0.png)
+![png](output_66_0.png)
     
 
 
@@ -1225,12 +1306,12 @@ plt.title('Image Pixel Minimum Distribution by Category', fontsize=14, weight='b
 # by category of the image pixel values
 ##################################
 sns.displot(data = imageEDA, x = 'StDev', kind="kde", hue = 'Class', height=6, aspect=1.40)
-plt.title('Image Pixel Standard Deviation Distribution by Category', fontsize=14, weight='bold');
+plt.title('Image Pixel Intensity Standard Deviation Distribution by Category', fontsize=14, weight='bold');
 ```
 
 
     
-![png](output_63_0.png)
+![png](output_67_0.png)
     
 
 
@@ -1246,14 +1327,14 @@ sns.set(style="ticks", font_scale = 1)
 ax = sns.scatterplot(data=imageEDA, x="Mean", y=imageEDA['StDev'], hue='Class', alpha=0.5)
 sns.despine(top=True, right=True, left=False, bottom=False)
 plt.xticks(rotation=0, fontsize = 12)
-ax.set_xlabel('Image Pixel Mean',fontsize=14, weight='bold')
-ax.set_ylabel('Image Pixel Standard Deviation', fontsize=14, weight='bold')
-plt.title('Image Pixel Mean and Standard Deviation Distribution', fontsize = 14, weight='bold');
+ax.set_xlabel('Image Pixel Intensity Mean',fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+plt.title('Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize = 14, weight='bold');
 ```
 
 
     
-![png](output_64_0.png)
+![png](output_68_0.png)
     
 
 
@@ -1268,17 +1349,17 @@ scatterplot = sns.FacetGrid(imageEDA, col="Class", height=6)
 scatterplot.map_dataframe(sns.scatterplot, x='Mean', y='StDev', alpha=0.5)
 scatterplot.set_titles(col_template="{col_name}", row_template="{row_name}", size=18)
 scatterplot.fig.subplots_adjust(top=.8)
-scatterplot.fig.suptitle('Image Pixel Mean and Standard Deviation Distribution', fontsize=14, weight='bold')
+scatterplot.fig.suptitle('Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold')
 axes = scatterplot.axes.flatten()
-axes[0].set_ylabel('Image Pixel Standard Deviation')
+axes[0].set_ylabel('Image Pixel Intensity Standard Deviation')
 for ax in axes:
-    ax.set_xlabel('Image Pixel Mean')
+    ax.set_xlabel('Image Pixel Intensity Mean')
 scatterplot.fig.tight_layout()
 ```
 
 
     
-![png](output_65_0.png)
+![png](output_69_0.png)
     
 
 
@@ -1299,11 +1380,11 @@ paths = DF_sample['Path']
 fig, ax = plt.subplots(figsize=(15,9))
 ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
-ax.set_xlabel('Image Pixel Mean', fontsize=14, weight='bold')
-ax.set_ylabel('Image Pixel Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
 ax.set_xlim(40,220)
 ax.set_ylim(10,110)
-plt.title('Overall: Image Pixel Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
+plt.title('Overall: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
 for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
     ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
@@ -1312,7 +1393,7 @@ for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 
 
     
-![png](output_66_0.png)
+![png](output_70_0.png)
     
 
 
@@ -1328,20 +1409,17 @@ for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 path_covid = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/COVID/'
 imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
 
-def getImage(path_covid):
-    return OffsetImage(cv2.imread(path_covid),zoom = 0.1)
-
 DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=123)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
 ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
-ax.set_xlabel('Image Pixel Mean', fontsize=14, weight='bold')
-ax.set_ylabel('Image Pixel Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
 ax.set_xlim(40,220)
 ax.set_ylim(10,110)
-plt.title('Covid-19: Image Pixel Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
+plt.title('Covid-19: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
 for x0, y0, path_covid in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
     ab = AnnotationBbox(getImage(path_covid), (x0, y0), frameon=False)
@@ -1350,7 +1428,7 @@ for x0, y0, path_covid in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 
 
     
-![png](output_67_0.png)
+![png](output_71_0.png)
     
 
 
@@ -1366,20 +1444,17 @@ for x0, y0, path_covid in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 path_viral_pneumonia = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Viral Pneumonia/'
 imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
 
-def getImage(path_viral_pneumonia):
-    return OffsetImage(cv2.imread(path_viral_pneumonia),zoom = 0.1)
-
 DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=123)
 paths = DF_sample['Path']
 
 fig, ax = plt.subplots(figsize=(15,9))
 ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
-ax.set_xlabel('Image Pixel Mean', fontsize=14, weight='bold')
-ax.set_ylabel('Image Pixel Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
 ax.set_xlim(40,220)
 ax.set_ylim(10,110)
-plt.title('Viral Pneumonia: Image Pixel Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
+plt.title('Viral Pneumonia: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
 for x0, y0, path_viral_pneumonia in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
     ab = AnnotationBbox(getImage(path_viral_pneumonia), (x0, y0), frameon=False)
@@ -1388,7 +1463,7 @@ for x0, y0, path_viral_pneumonia in zip(DF_sample['Mean'], DF_sample['StDev'],pa
 
 
     
-![png](output_68_0.png)
+![png](output_72_0.png)
     
 
 
@@ -1399,13 +1474,10 @@ for x0, y0, path_viral_pneumonia in zip(DF_sample['Mean'], DF_sample['StDev'],pa
 # scatterplot distribution
 # of the image pixel values
 # represented as actual images
-# for the Viral Pneumonia class
+# for the Normal class
 ##################################
 path_normal = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Normal/'
 imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
-
-def getImage(path_normal):
-    return OffsetImage(cv2.imread(path_normal),zoom = 0.1)
 
 DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=123)
 paths = DF_sample['Path']
@@ -1413,11 +1485,11 @@ paths = DF_sample['Path']
 fig, ax = plt.subplots(figsize=(15,9))
 ab = sns.scatterplot(data=DF_sample, x="Mean", y='StDev')
 sns.despine(top=True, right=True, left=False, bottom=False)
-ax.set_xlabel('Image Pixel Mean', fontsize=14, weight='bold')
-ax.set_ylabel('Image Pixel Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlabel('Image Pixel Intensity Mean', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
 ax.set_xlim(40,220)
 ax.set_ylim(10,110)
-plt.title('Healthy: Image Pixel Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
+plt.title('Healthy: Image Pixel Intensity Mean and Standard Deviation Distribution', fontsize=14, weight='bold');
 
 for x0, y0, path_normal in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
     ab = AnnotationBbox(getImage(path_normal), (x0, y0), frameon=False)
@@ -1426,7 +1498,282 @@ for x0, y0, path_normal in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 
 
     
-![png](output_69_0.png)
+![png](output_73_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+##################################
+DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-20,150)
+ax.set_ylim(10,110)
+plt.title('Overall: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_74_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Covid-19 class
+##################################
+path_covid = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/COVID/'
+imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
+
+DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-20,150)
+ax.set_ylim(10,110)
+plt.title('Covid-19: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_75_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Viral Pneumonia class
+##################################
+path_viral_pneumonia = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Viral Pneumonia/'
+imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
+
+DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-20,150)
+ax.set_ylim(10,110)
+plt.title('Viral Pneumonia: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_76_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Normal class
+##################################
+path_normal = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Normal/'
+imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
+
+DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Min", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Minimum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(-20,150)
+ax.set_ylim(10,110)
+plt.title('Normal: Image Pixel Intensity Minimum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_77_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+##################################
+def getImage(path):
+    return OffsetImage(cv2.imread(path),zoom = 0.1)
+
+DF_sample = imageEDA.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(100,270)
+ax.set_ylim(10,110)
+plt.title('Overall: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_78_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Covid-19 class
+##################################
+path_covid = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/COVID/'
+imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
+
+DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(100,270)
+ax.set_ylim(10,110)
+plt.title('Covid-19: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_79_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the minimum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Viral Pneumonia class
+##################################
+path_viral_pneumonia = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Viral Pneumonia/'
+imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
+
+DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(100,270)
+ax.set_ylim(10,110)
+plt.title('Viral Pneumonia: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_80_0.png)
+    
+
+
+
+```python
+##################################
+# Formulating the maximum and standard deviation 
+# scatterplot distribution
+# of the image pixel values
+# represented as actual images
+# for the Normal class
+##################################
+path_normal = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Normal/'
+imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
+
+DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=123)
+paths = DF_sample['Path']
+
+fig, ax = plt.subplots(figsize=(15,9))
+ab = sns.scatterplot(data=DF_sample, x="Max", y='StDev')
+sns.despine(top=True, right=True, left=False, bottom=False)
+ax.set_xlabel('Image Pixel Intensity Maximum', fontsize=14, weight='bold')
+ax.set_ylabel('Image Pixel Intensity Standard Deviation', fontsize=14, weight='bold')
+ax.set_xlim(100,270)
+ax.set_ylim(10,110)
+plt.title('Normal: Image Pixel Intensity Maximum and Standard Deviation Distribution', fontsize=14, weight='bold');
+
+for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
+    ab = AnnotationBbox(getImage(path), (x0, y0), frameon=False)
+    ax.add_artist(ab)
+```
+
+
+    
+![png](output_81_0.png)
     
 
 
@@ -1692,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 92ms/step
+    45/45 [==============================] - 4s 81ms/step
     
 
 
@@ -1707,7 +2054,7 @@ plot_training_history(model_nr_history, 'CNN With No Regularization : ')
 
 
     
-![png](output_81_0.png)
+![png](output_93_0.png)
     
 
 
@@ -1749,7 +2096,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_82_0.png)
+![png](output_94_0.png)
     
 
 
@@ -2093,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 88ms/step
+    45/45 [==============================] - 4s 77ms/step
     
 
 
@@ -2108,7 +2455,7 @@ plot_training_history(model_dr_history, 'CNN With Dropout Regularization : ')
 
 
     
-![png](output_93_0.png)
+![png](output_105_0.png)
     
 
 
@@ -2151,7 +2498,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_94_0.png)
+![png](output_106_0.png)
     
 
 
@@ -2504,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 86ms/step
+    45/45 [==============================] - 4s 90ms/step
     
 
 
@@ -2519,7 +2866,7 @@ plot_training_history(model_bnr_history, 'CNN With Batch Normalization Regulariz
 
 
     
-![png](output_105_0.png)
+![png](output_117_0.png)
     
 
 
@@ -2562,7 +2909,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_106_0.png)
+![png](output_118_0.png)
     
 
 
@@ -2946,7 +3293,7 @@ plot_training_history(model_dr_bnr_history, 'CNN With Dropout and Batch Normaliz
 
 
     
-![png](output_117_0.png)
+![png](output_129_0.png)
     
 
 
@@ -2992,7 +3339,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_118_0.png)
+![png](output_130_0.png)
     
 
 
@@ -3280,7 +3627,7 @@ for container in cnn_model_performance_comparison_precision_plot.containers:
 
 
     
-![png](output_125_0.png)
+![png](output_137_0.png)
     
 
 
@@ -3394,7 +3741,7 @@ for container in cnn_model_performance_comparison_recall_plot.containers:
 
 
     
-![png](output_128_0.png)
+![png](output_140_0.png)
     
 
 
@@ -3508,7 +3855,7 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 
 
     
-![png](output_131_0.png)
+![png](output_143_0.png)
     
 
 
@@ -3538,7 +3885,7 @@ plt.show()
 
 
     
-![png](output_134_0.png)
+![png](output_146_0.png)
     
 
 
@@ -3561,7 +3908,7 @@ plt.show()
 
 
     
-![png](output_135_0.png)
+![png](output_147_0.png)
     
 
 
@@ -3782,7 +4129,7 @@ display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']==True])
 
 
     
-![png](output_142_0.png)
+![png](output_154_0.png)
     
 
 
@@ -3797,7 +4144,7 @@ display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']!=True])
 
 
     
-![png](output_143_0.png)
+![png](output_155_0.png)
     
 
 
@@ -3895,7 +4242,7 @@ def gradcam_of_images(correct_class):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -3910,7 +4257,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -3947,7 +4294,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 
 
     
-![png](output_150_0.png)
+![png](output_162_0.png)
     
 
 
@@ -3965,7 +4312,7 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
     
-![png](output_151_0.png)
+![png](output_163_0.png)
     
 
 
@@ -4010,7 +4357,7 @@ def make_gradcam_heatmap(img_array, model, pred_index=None):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4025,7 +4372,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9812\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4043,7 +4390,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 
 
     
-![png](output_155_0.png)
+![png](output_167_0.png)
     
 
 
@@ -4061,7 +4408,7 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
     
-![png](output_156_0.png)
+![png](output_168_0.png)
     
 
 
@@ -4069,6 +4416,10 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
 
+
+![CaseStudy5_Summary_1.png](attachment:a9ef83a1-7900-4d18-ac1a-da802afcf4be.png)
+
+![CaseStudy5_Summary_2.png](attachment:33c5dabf-581d-40ee-9efc-cf8f5e75e922.png)
 
 # 3. References <a class="anchor" id="References"></a>
 * **[Book]** [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python) by Francois Chollet
