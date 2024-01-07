@@ -2039,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 3s 74ms/step
+    45/45 [==============================] - 4s 77ms/step
     
 
 
@@ -2440,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 77ms/step
+    45/45 [==============================] - 3s 76ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 97ms/step
+    45/45 [==============================] - 4s 85ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 91ms/step
+    45/45 [==============================] - 4s 90ms/step
     
 
 
@@ -3864,7 +3864,7 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 #### 1.3.7.1 Convolutional Layer Filter Visualization <a class="anchor" id="1.3.7.1"></a>
 
 1. The visualized filters using the first convolutional layer of the selection model - **CNN Model With Batch Normalization Regularization** showed low-level features including edges and textures.
-2. The visualized filters using the second and final convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** showed mid-level features including patterns and shapes.
+2. The visualized filters using the second and final convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** showed mid-level to high-level features including patterns and shapes.
 
 
 ```python
@@ -3917,17 +3917,17 @@ plt.show()
 1. The gradient-weighted class activation map for  the first convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** highlighted general image features that lead to the activation of the different image categories.
     * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
         * 1.1.1 Denser intensity for the part of the image pertaining to the lung
-        * 1.1.2 Relatively invisible outlines for the part of the image pertaining to the thorax
+        * 1.1.2 Relatively invisible outlines for the part of the image pertaining to the bronchial structure
     * 1.2 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
         * 1.2.1 Denser intensity for the part of the image pertaining to the lung
-        * 1.2.2 Clearly visible outlines for the part of the image pertaining to the thorax
+        * 1.2.2 Clearly visible outlines for the part of the image pertaining to the bronchial structure
     * 1.3 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
         * 1.3.1 Hazy intensity for the part of the image pertaining to the lung
-        * 1.3.2 Relatively visible outlines for the part of the image pertaining to the thorax
+        * 1.3.2 Relatively visible outlines for the part of the image pertaining to the bronchial structure
 2. The gradient-weighted class activation map for  the second and final convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** highlighted specific image features that lead to the activation of the different image categories.
     * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
         * 1.1.1 Lung fields appeared patchy and multifocal
-        * 1.1.2 Pulmonary vessels and bronchial structures are not clearly invisible with signs of obstruction or infiltration
+        * 1.1.2 Pulmonary vessels and bronchial structures are not clearly visible with signs of obstruction or infiltration
         * 1.1.3 Both lungs appear generally asymmetrical in size and density
     * 1.2 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
         * 1.2.1 Clear lung fields without significant opacities or consolidations
@@ -4242,7 +4242,7 @@ def gradcam_of_images(correct_class):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_23336\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4257,7 +4257,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_23336\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4357,7 +4357,7 @@ def make_gradcam_heatmap(img_array, model, pred_index=None):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_23336\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4372,7 +4372,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_23336\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4426,6 +4426,8 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 ![CaseStudy5_Summary_4.png](attachment:ab2cac98-2ea0-4f16-84b7-42ea1dfc0098.png)
 
 ![CaseStudy5_Summary_5.png](attachment:e30bc69a-d0a7-4455-a04a-7ec8990a3d3a.png)
+
+![CaseStudy5_Summary_6.png](attachment:c770e396-e269-463d-8b95-8c0b82f24999.png)
 
 # 3. References <a class="anchor" id="References"></a>
 * **[Book]** [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python) by Francois Chollet
