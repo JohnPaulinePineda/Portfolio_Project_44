@@ -1877,7 +1877,7 @@ def plot_training_history(history, model_name):
     plt.ylim(0, 5)
     plt.xlabel('Epoch', fontsize = 14, weight = 'bold',)
     plt.ylabel('Loss', fontsize = 14, weight = 'bold',)
-    plt.legend()
+    plt.legend(loc='upper right')
     plt.show()
 ```
 
@@ -2039,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 81ms/step
+    45/45 [==============================] - 4s 76ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 90ms/step
+    45/45 [==============================] - 4s 85ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 85ms/step
+    45/45 [==============================] - 4s 97ms/step
     
 
 
@@ -4242,7 +4242,7 @@ def gradcam_of_images(correct_class):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_20616\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4257,7 +4257,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_20616\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4357,7 +4357,7 @@ def make_gradcam_heatmap(img_array, model, pred_index=None):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_20616\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4372,7 +4372,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_16460\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_20616\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4417,9 +4417,13 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
 
-![CaseStudy5_Summary_1.png](attachment:a9ef83a1-7900-4d18-ac1a-da802afcf4be.png)
+![CaseStudy5_Summary_1.png](attachment:e9d30044-2a6e-4310-9149-cf4a147e0cb4.png)
 
-![CaseStudy5_Summary_2.png](attachment:33c5dabf-581d-40ee-9efc-cf8f5e75e922.png)
+![CaseStudy5_Summary_2.png](attachment:dfeb96a1-573b-4226-b480-b8a122ec63c0.png)
+
+![CaseStudy5_Summary_3.png](attachment:42c50943-0d12-4462-8204-760ea2492edb.png)
+
+![CaseStudy5_Summary_4.png](attachment:2ccf46fd-57de-4721-bc81-89c89c9307b7.png)
 
 # 3. References <a class="anchor" id="References"></a>
 * **[Book]** [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python) by Francois Chollet
