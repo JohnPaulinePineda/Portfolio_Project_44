@@ -2039,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 77ms/step
+    45/45 [==============================] - 3s 75ms/step
     
 
 
@@ -2440,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 3s 76ms/step
+    45/45 [==============================] - 4s 76ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 85ms/step
+    45/45 [==============================] - 4s 84ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 90ms/step
+    45/45 [==============================] - 4s 92ms/step
     
 
 
@@ -4242,7 +4242,7 @@ def gradcam_of_images(correct_class):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4257,7 +4257,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4357,7 +4357,7 @@ def make_gradcam_heatmap(img_array, model, pred_index=None):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4372,7 +4372,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_9048\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4415,6 +4415,29 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 # 2. Summary <a class="anchor" id="Summary"></a>
 
 
+**A convolutional neural network model applied with batch normalization provided a set of robust and reliable predictions for classifying x-ray images into the normal, viral pneumonia, and COVID categories – predominantly characterized by low-level features including edges and textures; and mid to high-level features including shapes and patterns. The gradient-weighted class activation maps for  the convolutional layers highlighted image features that enabled the activation of the different image categories as follows:**
+
+* **Normal**
+    * **Clear lung fields**
+    * **Clear bronchial structure**
+* **Viral Pneumonia**
+    * **Relatively patchy lung fields**
+    * **Relatively visible bronchial structure**
+* **COVID**
+    * **Heavily patchy lung fields**
+    * **Invisible bronchial structure**
+
+**Overall, the formulated model effectively learned the important hierarchical features and spatial representations directly from the raw pixel intensity data of x-ray images which corresponded to typical characteristics used in differentiating respiratory conditions in radiology and clinical imaging modalities. While the classification results have been sufficiently high, the current study can be further extended to achieve optimal model performance by conducting model hyperparameter tuning given sufficient analysis time and higher computing power, formulating deeper neural network architectures to better capture spatial hierarchies and features in the input images, and considering an imbalanced dataset and applying remedial measures to address unbalanced classification to accurately reflect a real-world scenario**
+
+* From an initial dataset comprised of 3600 images, an optimal subset of **7200 observations comprised of 3600 original images and 3600 augmented images** representing three image categories - normal, viral pneumonia and COVID respiratory conditions were determined after conducting data quality assessment and applying preprocessing operations most suitable for the downstream analysis. Hierarchical features from the images were automatically and directly learned using the raw pixel data.
+
+* Multiple convolutional neural network classification (CNN) models with various regularization settings namely, **CNN With No Regularization**, **CNN With Dropout Regularization**, **CNN With Batch Normalization Regularization** and **CNN With Dropout and Batch Normalization Regularization** were formulated to discover hierarchical and spatial representations for image category prediction. Epoch training was optimized through internal resampling validation using **Split-Sample Holdout** with **F1 Score** used as the primary performance metric among **Precision** and **Recall**. All candidate models were compared based on internal and external validation performance.
+
+* The final model selected among candidates used **CNN With Batch Normalization Regularization** defined by 4,4878,979 parameters and 9 sequential layers composed of the following: **Conv2D**: Filters=32, Kernel Size=3x3, Activation=RELU, Padding=Same; **Max_Pooling2D**: Pool Size=2x2, **Conv2D**: Filters=64, Kernel Size=3x3, Activation=RELU, Padding=Same; **Batch Normalization**; **Activation**: Activation=RELU; **Max_Pooling2D**: Pool Size=2x2; **Flatten**; **Dense**: Units=128, Activation=RELU; and **Dense**: Units=3, Activation=SOFTMAX.
+    
+* The final model demonstrated the best externally validated F1 Score determined for all (**F1 Score=0.91, Precision=0.91, Recall=0.91**) and the individual image categories - normal (**F1 Score=0.91, Precision=0.88, Recall=0.95**), viral pneumonia (**F1 Score=0.89, Precision=0.91, Recall=0.88**) and COVID (**F1 Score=0.92, Precision=0.94, Recall=0.90**).
+
+* Post-hoc exploration of the model results involved **Convolutional Layer Filter Visualization** and **Gradient Class Activation Mapping** methods. Both methods highlighted low-level and high-level image and object features that lead to the activation of the different image categories. These results helped provide insights on the important hierarchical and spatial representations for image category differentiation and model prediction.
 
 
 ![CaseStudy5_Summary_1.png](attachment:e9d30044-2a6e-4310-9149-cf4a147e0cb4.png)
