@@ -68,7 +68,7 @@ Specific objectives are given as follows:
 
 * Obtain an optimal subset of observations by conducting data quality assessment and applying preprocessing operations to improve generalization and reduce sensitivity to variations most suitable for the downstream analysis
 
-* Develop multiple convolutional neural network models with remedial measures applied to prevent overfitting and improve the stability of the training process
+* Develop multiple convolutional neural network models with regularization measures applied to prevent overfitting and improve the stability of the training process
 
 * Select the final classification model among candidates based on robust performance estimates
 
@@ -2039,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 3s 75ms/step
+    45/45 [==============================] - 4s 75ms/step
     
 
 
@@ -2440,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 76ms/step
+    45/45 [==============================] - 3s 76ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 84ms/step
+    45/45 [==============================] - 4s 86ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 92ms/step
+    45/45 [==============================] - 4s 93ms/step
     
 
 
@@ -4242,7 +4242,7 @@ def gradcam_of_images(correct_class):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4257,7 +4257,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4357,7 +4357,7 @@ def make_gradcam_heatmap(img_array, model, pred_index=None):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4372,7 +4372,7 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_19380\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
+    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
       jet = cm.get_cmap("jet")
     
 
@@ -4429,9 +4429,9 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 **Overall, the formulated model effectively learned the important hierarchical features and spatial representations directly from the raw pixel intensity data of x-ray images which corresponded to typical characteristics used in differentiating respiratory conditions in radiology and clinical imaging modalities. While the classification results have been sufficiently high, the current study can be further extended to achieve optimal model performance by conducting model hyperparameter tuning given sufficient analysis time and higher computing power, formulating deeper neural network architectures to better capture spatial hierarchies and features in the input images, and considering an imbalanced dataset and applying remedial measures to address unbalanced classification to accurately reflect a real-world scenario**
 
-* From an initial dataset comprised of 3600 images, an optimal subset of **7200 observations comprised of 3600 original images and 3600 augmented images** representing three image categories - normal, viral pneumonia and COVID respiratory conditions were determined after conducting data quality assessment and applying preprocessing operations most suitable for the downstream analysis. Hierarchical features from the images were automatically and directly learned using the raw pixel data.
+* From an initial dataset comprised of 3600 grayscale images, an optimal subset of **7200 observations comprised of 3600 original images and 3600 augmented images** representing three image categories - **Normal**, **Viral Pneumonia** and **COVID** respiratory conditions were determined after conducting data quality assessment and applying preprocessing operations to improve generalization and reduce sensitivity to variations most suitable for the downstream analysis. Hierarchical features from the images were automatically and directly learned using the raw pixel data.
 
-* Multiple convolutional neural network classification (CNN) models with various regularization settings namely, **CNN With No Regularization**, **CNN With Dropout Regularization**, **CNN With Batch Normalization Regularization** and **CNN With Dropout and Batch Normalization Regularization** were formulated to discover hierarchical and spatial representations for image category prediction. Epoch training was optimized through internal resampling validation using **Split-Sample Holdout** with **F1 Score** used as the primary performance metric among **Precision** and **Recall**. All candidate models were compared based on internal and external validation performance.
+* Multiple convolutional neural network classification (CNN) models were developed with various combinations of regularization techniques namely, **Dropout** for preventing overfitting by randomly dropping out neurons during training, and **Batch Normalization** for standardizing the input of each layer to stabilize and accelerate training. **CNN With No Regularization**, **CNN With Dropout Regularization**, **CNN With Batch Normalization Regularization** and **CNN With Dropout and Batch Normalization Regularization** were formulated to discover hierarchical and spatial representations for image category prediction. Epoch training was optimized through internal resampling validation using **Split-Sample Holdout** with **F1 Score** used as the primary performance metric among **Precision** and **Recall**. All candidate models were compared based on internal and external validation performance.
 
 * The final model selected among candidates used **CNN With Batch Normalization Regularization** defined by 4,4878,979 parameters and 9 sequential layers composed of the following: **Conv2D**: Filters=32, Kernel Size=3x3, Activation=RELU, Padding=Same; **Max_Pooling2D**: Pool Size=2x2, **Conv2D**: Filters=64, Kernel Size=3x3, Activation=RELU, Padding=Same; **Batch Normalization**; **Activation**: Activation=RELU; **Max_Pooling2D**: Pool Size=2x2; **Flatten**; **Dense**: Units=128, Activation=RELU; and **Dense**: Units=3, Activation=SOFTMAX.
     
@@ -4527,6 +4527,9 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 * **[Publication]** [Gradient-Based Learning Applied to Document Recognition](https://ieeexplore.ieee.org/document/726791) by Yann LeCun, Leon Bottou, Yoshua Bengio and Patrick Haffner (Proceedings of the IEEE)
 * **[Publication]** [Learning Deep Features for Discriminative Localization](https://arxiv.org/abs/1512.04150) by Bolei Zhou, Aditya Khosla, Agata Lapedriza, Aude Oliva and Antonio Torralba (Computer Vision and Pattern Recognition)
 * **[Publication]** [Grad-CAM: Visual Explanations from Deep Networks via Gradient-based Localization](https://arxiv.org/abs/1610.02391) by Ramprasaath Selvaraju, Michael Cogswell, Abhishek Das, Ramakrishna Vedantam, Devi Parikh and Dhruv Batra (Computer Vision and Pattern Recognition)
+* **[Course]** [IBM Data Analyst Professional Certificate](https://www.coursera.org/professional-certificates/ibm-data-analyst) by IBM Team (Coursera)
+* **[Course]** [IBM Data Science Professional Certificate](https://www.coursera.org/professional-certificates/ibm-data-science) by IBM Team (Coursera)
+* **[Course]** [IBM Machine Learning Professional Certificate](https://www.coursera.org/professional-certificates/ibm-machine-learning) by IBM Team (Coursera)
 
 
 
