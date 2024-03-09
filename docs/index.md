@@ -2039,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 75ms/step
+    45/45 [==============================] - 7s 150ms/step
     
 
 
@@ -2440,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 3s 76ms/step
+    45/45 [==============================] - 6s 131ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 86ms/step
+    45/45 [==============================] - 6s 134ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 4s 93ms/step
+    45/45 [==============================] - 6s 140ms/step
     
 
 
@@ -4195,7 +4195,7 @@ def gradCAMImage(image):
     img = img_to_array(img)
     heatmap = np.uint8(255 * heatmap)
 
-    jet = cm.get_cmap("jet")
+    jet = plt.colormaps["jet"]
 
     jet_colors = jet(np.arange(256))[:, :3]
     jet_heatmap = jet_colors[heatmap]
@@ -4242,10 +4242,6 @@ def gradcam_of_images(correct_class):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
-      jet = cm.get_cmap("jet")
-    
-
 
 ```python
 ##################################
@@ -4256,10 +4252,6 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 ##################################
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
-
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
-      jet = cm.get_cmap("jet")
-    
 
 
 ```python
@@ -4357,10 +4349,6 @@ def make_gradcam_heatmap(img_array, model, pred_index=None):
 matched_categories, matched_categories_titles = gradcam_of_images(correct_class=True)
 ```
 
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
-      jet = cm.get_cmap("jet")
-    
-
 
 ```python
 ##################################
@@ -4371,10 +4359,6 @@ matched_categories, matched_categories_titles = gradcam_of_images(correct_class=
 ##################################
 mismatched_categories, mismatched_categories_titles = gradcam_of_images(correct_class=False)
 ```
-
-    C:\Users\John pauline magno\AppData\Local\Temp\ipykernel_13188\3334071115.py:16: MatplotlibDeprecationWarning: The get_cmap function was deprecated in Matplotlib 3.7 and will be removed two minor releases later. Use ``matplotlib.colormaps[name]`` or ``matplotlib.colormaps.get_cmap(obj)`` instead.
-      jet = cm.get_cmap("jet")
-    
 
 
 ```python
