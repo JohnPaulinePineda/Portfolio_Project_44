@@ -2039,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 7s 150ms/step
+    45/45 [==============================] - 6s 121ms/step
     
 
 
@@ -2440,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 131ms/step
+    45/45 [==============================] - 6s 121ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 134ms/step
+    45/45 [==============================] - 6s 136ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 140ms/step
+    45/45 [==============================] - 7s 143ms/step
     
 
 
@@ -4422,6 +4422,13 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 * The final model demonstrated the best externally validated F1 Score determined for all (**F1 Score=0.91, Precision=0.91, Recall=0.91**) and the individual image categories - normal (**F1 Score=0.91, Precision=0.88, Recall=0.95**), viral pneumonia (**F1 Score=0.89, Precision=0.91, Recall=0.88**) and COVID (**F1 Score=0.92, Precision=0.94, Recall=0.90**).
 
 * Post-hoc exploration of the model results involved **Convolutional Layer Filter Visualization** and **Gradient Class Activation Mapping** methods. Both methods highlighted low-level and high-level image and object features that lead to the activation of the different image categories. These results helped provide insights on the important hierarchical and spatial representations for image category differentiation and model prediction.
+
+**The current results have limitations which can be further addressed by extending the study to include the following actions:**
+* Conducting model hyperparameter tuning given sufficient analysis time and higher computing power
+* Formulating deeper neural network architectures to better capture spatial hierarchies and features in the input images
+* Applying various techniques to interpret the CNN models by understanding and visualizing the features and decisions made at each layer
+* Considering an imbalanced dataset and applying remedial measures to address unbalanced classification to accurately reflect real-world scenario
+* Including a separate test subset for an independent evaluation of the tuned model
 
 
 ![CaseStudy5_Summary_1.png](attachment:e9d30044-2a6e-4310-9149-cf4a147e0cb4.png)
