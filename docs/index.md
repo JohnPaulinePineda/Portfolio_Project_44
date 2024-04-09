@@ -2440,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 121ms/step
+    45/45 [==============================] - 5s 118ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 136ms/step
+    45/45 [==============================] - 6s 134ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 7s 143ms/step
+    45/45 [==============================] - 7s 144ms/step
     
 
 
@@ -4411,7 +4411,7 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
     * **Heavily patchy lung fields**
     * **Invisible bronchial structure**
 
-**Overall, the formulated model effectively learned the important hierarchical features and spatial representations directly from the raw pixel intensity data of x-ray images which corresponded to typical characteristics used in differentiating respiratory conditions in radiology and clinical imaging modalities. While the classification results have been sufficiently high, the current study can be further extended to achieve optimal model performance by conducting model hyperparameter tuning given sufficient analysis time and higher computing power, formulating deeper neural network architectures to better capture spatial hierarchies and features in the input images, and considering an imbalanced dataset and applying remedial measures to address unbalanced classification to accurately reflect a real-world scenario**
+**Overall, a convolutional neural network model architecture is particularly well-suited for learning the hierarchical features and spatial representations directly from raw pixel intensity data of X-ray images which sufficiently captured typical characteristics used in differentiating respiratory conditions in radiology and clinical imaging modalities. By leveraging automated feature extraction and enhanced sensitivity in identifying intricate spatial representations or subtle patterns representing abnormalities in images, convolutional neural network models can assist healthcare professionals in making more accurate diagnoses, enabling timely interventions, and ultimately improving patient outcomes in the management of respiratory conditions.**
 
 * From an initial dataset comprised of 3600 grayscale images, an optimal subset of **7200 observations comprised of 3600 original images and 3600 augmented images** representing three image categories - **Normal**, **Viral Pneumonia** and **COVID** respiratory conditions were determined after conducting data quality assessment and applying preprocessing operations to improve generalization and reduce sensitivity to variations most suitable for the downstream analysis. Hierarchical features from the images were automatically and directly learned using the raw pixel data.
 
