@@ -899,7 +899,7 @@ display(image.shape[0])
 # Determining the image width
 ##################################
 print('Image Width:')
-display(image.shape[0])
+display(image.shape[1])
 ```
 
     Image Width:
@@ -2039,7 +2039,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 121ms/step
+    45/45 [==============================] - 11s 251ms/step
     
 
 
@@ -2440,7 +2440,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 5s 118ms/step
+    45/45 [==============================] - 6s 123ms/step
     
 
 
@@ -2851,7 +2851,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 134ms/step
+    45/45 [==============================] - 6s 139ms/step
     
 
 
@@ -3277,7 +3277,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 7s 144ms/step
+    45/45 [==============================] - 6s 134ms/step
     
 
 
