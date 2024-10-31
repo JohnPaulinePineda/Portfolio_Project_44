@@ -2,7 +2,7 @@
 # Supervised Learning : Learning Hierarchical Features for Predicting Multiclass X-Ray Images using Convolutional Neural Network Model Variations
 
 ***
-### John Pauline Pineda <br> <br> *January 9, 2024*
+### [**John Pauline Pineda**](https://github.com/JohnPaulinePineda) <br> <br> *January 9, 2024*
 ***
 
 * [**1. Table of Contents**](#TOC)
@@ -31,9 +31,10 @@
             * [1.3.5.3 CNN With Dropout Regularization](#1.3.5.3)
             * [1.3.5.4 CNN With Batch Normalization Regularization](#1.3.5.4)
             * [1.3.5.5 CNN With Dropout and Batch Normalization Regularization](#1.3.5.5)
-        * [1.3.6 Model Selection](#1.3.6)   
-            * [1.3.6.1 Convolutional Layer Filter Visualization](#1.3.6.1)
-            * [1.3.6.2 Gradient-Weighted Class Activation Mapping](#1.3.6.1)
+        * [1.3.6 Model Selection](#1.3.6) 
+        * [1.3.7 Model Presentation](#1.3.6)   
+            * [1.3.7.1 Convolutional Layer Filter Visualization](#1.3.7.1)
+            * [1.3.7.2 Gradient-Weighted Class Activation Mapping](#1.3.7.2)
 * [**2. Summary**](#Summary)   
 * [**3. References**](#References)
 
@@ -164,20 +165,8 @@ Model presentation was conducted post-hoc and focused on both model-specific and
 
 ```python
 ##################################
-# Installing important packages
-##################################
-# !pip install mlxtend
-# !pip install --upgrade tensorflow
-# !pip install opencv-python
-# !pip install keras==2.12.0
-```
-
-
-```python
-##################################
 # Loading Python Libraries 
-# for Data Loading,
-# Data Preprocessing and
+# for Data Loading, # Data Preprocessing and
 # Exploratory Data Analysis
 ##################################
 import numpy as np
@@ -188,18 +177,17 @@ import matplotlib.image as mpimg
 import matplotlib.cm as cm
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
 %matplotlib inline
+
 import tensorflow as tf
 import keras
+
 from PIL import Image
 from glob import glob
 import cv2
 import os
 import random
+import math
 ```
-
-    WARNING:tensorflow:From C:\Users\John pauline magno\AppData\Roaming\Python\Python311\site-packages\keras\losses.py:2664: The name tf.losses.sparse_softmax_cross_entropy is deprecated. Please use tf.compat.v1.losses.sparse_softmax_cross_entropy instead.
-    
-    
 
 
 ```python
@@ -210,12 +198,10 @@ import random
 from keras import backend as K
 from keras import regularizers
 from keras.models import Sequential, Model,load_model
-from keras.layers import Activation, Dense, Dropout, Flatten, Conv2D, MaxPooling2D, MaxPool2D, AveragePooling2D, GlobalMaxPooling2D, BatchNormalization
-from keras.wrappers.scikit_learn import KerasClassifier
-from keras.utils.np_utils import to_categorical
+from keras.layers import Input, Activation, Dense, Dropout, Flatten, Conv2D, MaxPooling2D, MaxPool2D, AveragePooling2D, GlobalMaxPooling2D, BatchNormalization
 from keras.optimizers import Adam, SGD
-from keras.preprocessing.image import ImageDataGenerator
 from keras.callbacks import ReduceLROnPlateau, EarlyStopping, ModelCheckpoint
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.utils import img_to_array, array_to_img, load_img
 ```
 
@@ -236,7 +222,7 @@ from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 # Setting random seed options
 # for the analysis
 ##################################
-def set_seed(seed=88888888):
+def set_seed(seed=123):
     np.random.seed(seed) 
     tf.random.set_seed(seed) 
     keras.utils.set_random_seed(seed)
@@ -252,10 +238,23 @@ set_seed()
 
 ```python
 ##################################
-# Loading the dataset
+# Filtering out unncessary warnings
 ##################################
-path = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/'
+import warnings
+warnings.filterwarnings('ignore')
+```
 
+
+```python
+##################################
+# Defining file paths
+##################################
+DATASETS_ORIGINAL_PATH = r"datasets\COVID-19_Radiography_Dataset"
+
+```
+
+
+```python
 ##################################
 # Defining the image category levels
 ##################################
@@ -273,7 +272,7 @@ diagnosis_description_dictionary = {'COVID': 'Covid-19',
 ##################################
 # Consolidating the image path
 ##################################
-imageid_path_dictionary = {os.path.splitext(os.path.basename(x))[0]: x for x in glob(os.path.join(path, '*','*.png'))}
+imageid_path_dictionary = {os.path.splitext(os.path.basename(x))[0]: x for x in glob(os.path.join("..", DATASETS_ORIGINAL_PATH, '*','*.png'))}
 ```
 
 
@@ -287,11 +286,11 @@ dict(list(imageid_path_dictionary.items())[0:5])
 
 
 
-    {'COVID-1': 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset\\COVID\\COVID-1.png',
-     'COVID-10': 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset\\COVID\\COVID-10.png',
-     'COVID-100': 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset\\COVID\\COVID-100.png',
-     'COVID-1000': 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset\\COVID\\COVID-1000.png',
-     'COVID-1001': 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset\\COVID\\COVID-1001.png'}
+    {'COVID-1': '..\\datasets\\COVID-19_Radiography_Dataset\\COVID\\COVID-1.png',
+     'COVID-10': '..\\datasets\\COVID-19_Radiography_Dataset\\COVID\\COVID-10.png',
+     'COVID-100': '..\\datasets\\COVID-19_Radiography_Dataset\\COVID\\COVID-100.png',
+     'COVID-1000': '..\\datasets\\COVID-19_Radiography_Dataset\\COVID\\COVID-1000.png',
+     'COVID-1001': '..\\datasets\\COVID-19_Radiography_Dataset\\COVID\\COVID-1001.png'}
 
 
 
@@ -387,7 +386,7 @@ xray_images.head()
     <tr>
       <th>0</th>
       <td>COVID-1</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -395,7 +394,7 @@ xray_images.head()
     <tr>
       <th>1</th>
       <td>COVID-10</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -403,7 +402,7 @@ xray_images.head()
     <tr>
       <th>2</th>
       <td>COVID-100</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -411,7 +410,7 @@ xray_images.head()
     <tr>
       <th>3</th>
       <td>COVID-1000</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -419,7 +418,7 @@ xray_images.head()
     <tr>
       <th>4</th>
       <td>COVID-1001</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -537,7 +536,7 @@ display(xray_images.describe(include='object').transpose())
       <th>Path</th>
       <td>3600</td>
       <td>3600</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>1</td>
     </tr>
     <tr>
@@ -570,10 +569,11 @@ xray_images.Diagnosis.value_counts()
 
 
 
+    Diagnosis
     COVID              1200
     Normal             1200
     Viral Pneumonia    1200
-    Name: Diagnosis, dtype: int64
+    Name: count, dtype: int64
 
 
 
@@ -588,10 +588,11 @@ xray_images.Diagnosis.value_counts(normalize=True)
 
 
 
+    Diagnosis
     COVID              0.333333
     Normal             0.333333
     Viral Pneumonia    0.333333
-    Name: Diagnosis, dtype: float64
+    Name: proportion, dtype: float64
 
 
 
@@ -724,7 +725,7 @@ xray_images.head()
     <tr>
       <th>0</th>
       <td>COVID-1</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -733,7 +734,7 @@ xray_images.head()
     <tr>
       <th>1</th>
       <td>COVID-10</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -742,7 +743,7 @@ xray_images.head()
     <tr>
       <th>2</th>
       <td>COVID-100</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -751,7 +752,7 @@ xray_images.head()
     <tr>
       <th>3</th>
       <td>COVID-1000</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -760,7 +761,7 @@ xray_images.head()
     <tr>
       <th>4</th>
       <td>COVID-1001</td>
-      <td>C:/Users/John pauline magno/Python Notebooks/C...</td>
+      <td>..\datasets\COVID-19_Radiography_Dataset\COVID...</td>
       <td>COVID</td>
       <td>0</td>
       <td>Covid-19</td>
@@ -790,7 +791,7 @@ for n_axs, (type_name, type_rows) in zip(m_axs, xray_images.sort_values(['Diagno
 
 
     
-![png](output_40_0.png)
+![png](output_41_0.png)
     
 
 
@@ -857,7 +858,7 @@ plt.show()
 
 
     
-![png](output_42_0.png)
+![png](output_43_0.png)
     
 
 
@@ -970,7 +971,7 @@ display(image.max())
     
 
 
-    205
+    219
 
 
 
@@ -986,20 +987,21 @@ display(image.min())
     
 
 
-    10
+    0
 
 
 #### 1.3.3.2 Image Augmentation <a class="anchor" id="1.3.3.2"></a>
 
 1. Different image augmentation techniques were applied using various transformations to the training images to artificially increase the diversity of the dataset and improve the generalization and robustness of the model, including:
     * 1.1 **Rescaling** - normalization of the pixel values within the 0 to 1 range
-    * 1.2 **Rotation** - random image rotation by 20 degrees
-    * 1.3 **Width Shift** - random horizontal shifting of the image by 20% of the total width
-    * 1.4 **Height Shift** - random vertical shifting of the image by 20% of the total height
+    * 1.2 **Rotation** - random image rotation by 5 degrees
+    * 1.3 **Width Shift** - random horizontal shifting of the image by 5% of the total width
+    * 1.4 **Height Shift** - random vertical shifting of the image by 5% of the total height
+    * 1.7 **Shear Transformation** - image slanting by 5 degrees along the horizontal axis.
+    * 1.8 **Zooming** - random image zoom-in or zoom-out by a factor of 5%
+2. Other image augmentation techniques were not applied to minimize noise in the dataset, including:
     * 1.5 **Horizontal Flip** - random horizontal flipping of the image
     * 1.6 **Vertical Flip** - random vertical flipping of the image
-    * 1.7 **Shear Transformation** - image slanting by 20 degrees along the horizontal axis.
-    * 1.8 **Zooming** - random image zoom-in or zoom-out by a factor of 20%
 
 
 ```python
@@ -1007,7 +1009,7 @@ display(image.min())
 # Identifying the path for the images
 # and defining image categories 
 ##################################
-path = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset'
+path = (os.path.join("..", DATASETS_ORIGINAL_PATH))
 classes=["COVID", "Normal", "Viral Pneumonia"]
 num_classes = len(classes)
 batch_size = 16
@@ -1024,13 +1026,13 @@ batch_size = 16
 ##################################
 set_seed()
 train_datagen = ImageDataGenerator(rescale=1./255,
-                                   rotation_range=20,
-                                   width_shift_range=0.2,
-                                   height_shift_range=0.2,
-                                   horizontal_flip=True,
-                                   vertical_flip=True,
-                                   shear_range=0.2,
-                                   zoom_range=0.2,
+                                   rotation_range=5,
+                                   width_shift_range=0.05,
+                                   height_shift_range=0.05,
+                                   horizontal_flip=False,
+                                   vertical_flip=False,
+                                   shear_range=0.05,
+                                   zoom_range=0.05,
                                    validation_split=0.2)
 
 
@@ -1056,6 +1058,10 @@ train_gen = train_datagen.flow_from_directory(directory=path,
 # Loading samples of augmented images
 # for the training set
 ##################################
+##################################
+# Loading samples of augmented images
+# for the training set
+##################################
 fig, axes = plt.subplots(1, 5, figsize=(15, 3))
 
 for i in range(5):
@@ -1069,7 +1075,7 @@ plt.show()
 
 
     
-![png](output_54_0.png)
+![png](output_55_0.png)
     
 
 
@@ -1105,15 +1111,13 @@ test_gen = test_datagen.flow_from_directory(directory=path,
 
 ```python
 ##################################
-# Loading samples of augmented images
+# Loading samples of original images
 # for the validation set
 ##################################
+images, labels = next(test_gen)
 fig, axes = plt.subplots(1, 5, figsize=(15, 3))
-
-for i in range(5):
-    batch = next(test_gen)
-    images, labels = batch
-    axes[i].imshow(images[0])
+for i, idx in enumerate(range(0, 5)):
+    axes[i].imshow(images[idx])
     axes[i].set_title(f"Label: {labels[0]}")
     axes[i].axis('off')
 plt.show()
@@ -1121,7 +1125,7 @@ plt.show()
 
 
     
-![png](output_56_0.png)
+![png](output_57_0.png)
     
 
 
@@ -1263,7 +1267,7 @@ plt.title('Image Pixel Intensity Mean Distribution by Category', fontsize=14, we
 
 
     
-![png](output_64_0.png)
+![png](output_65_0.png)
     
 
 
@@ -1279,7 +1283,7 @@ plt.title('Image Pixel Intensity Maximum Distribution by Category', fontsize=14,
 
 
     
-![png](output_65_0.png)
+![png](output_66_0.png)
     
 
 
@@ -1295,7 +1299,7 @@ plt.title('Image Pixel Intensity Minimum Distribution by Category', fontsize=14,
 
 
     
-![png](output_66_0.png)
+![png](output_67_0.png)
     
 
 
@@ -1311,7 +1315,7 @@ plt.title('Image Pixel Intensity Standard Deviation Distribution by Category', f
 
 
     
-![png](output_67_0.png)
+![png](output_68_0.png)
     
 
 
@@ -1334,7 +1338,7 @@ plt.title('Image Pixel Intensity Mean and Standard Deviation Distribution', font
 
 
     
-![png](output_68_0.png)
+![png](output_69_0.png)
     
 
 
@@ -1359,7 +1363,7 @@ scatterplot.fig.tight_layout()
 
 
     
-![png](output_69_0.png)
+![png](output_70_0.png)
     
 
 
@@ -1393,7 +1397,7 @@ for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 
 
     
-![png](output_70_0.png)
+![png](output_71_0.png)
     
 
 
@@ -1406,7 +1410,7 @@ for x0, y0, path in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Covid-19 class
 ##################################
-path_covid = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/COVID/'
+path_covid = (os.path.join("..", DATASETS_ORIGINAL_PATH,'COVID/'))
 imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
 
 DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=123)
@@ -1428,7 +1432,7 @@ for x0, y0, path_covid in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 
 
     
-![png](output_71_0.png)
+![png](output_72_0.png)
     
 
 
@@ -1441,7 +1445,7 @@ for x0, y0, path_covid in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Viral Pneumonia class
 ##################################
-path_viral_pneumonia = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Viral Pneumonia/'
+path_viral_pneumonia = (os.path.join("..", DATASETS_ORIGINAL_PATH,'Viral Pneumonia/'))
 imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
 
 DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=123)
@@ -1463,7 +1467,7 @@ for x0, y0, path_viral_pneumonia in zip(DF_sample['Mean'], DF_sample['StDev'],pa
 
 
     
-![png](output_72_0.png)
+![png](output_73_0.png)
     
 
 
@@ -1476,7 +1480,7 @@ for x0, y0, path_viral_pneumonia in zip(DF_sample['Mean'], DF_sample['StDev'],pa
 # represented as actual images
 # for the Normal class
 ##################################
-path_normal = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Normal/'
+path_normal = (os.path.join("..", DATASETS_ORIGINAL_PATH,'Normal/'))
 imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
 
 DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=123)
@@ -1498,7 +1502,7 @@ for x0, y0, path_normal in zip(DF_sample['Mean'], DF_sample['StDev'],paths):
 
 
     
-![png](output_73_0.png)
+![png](output_74_0.png)
     
 
 
@@ -1529,7 +1533,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
 
 
     
-![png](output_74_0.png)
+![png](output_75_0.png)
     
 
 
@@ -1542,7 +1546,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Covid-19 class
 ##################################
-path_covid = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/COVID/'
+path_covid = (os.path.join("..", DATASETS_ORIGINAL_PATH,'COVID/'))
 imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
 
 DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=123)
@@ -1564,7 +1568,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
 
 
     
-![png](output_75_0.png)
+![png](output_76_0.png)
     
 
 
@@ -1577,7 +1581,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Viral Pneumonia class
 ##################################
-path_viral_pneumonia = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Viral Pneumonia/'
+path_viral_pneumonia = (os.path.join("..", DATASETS_ORIGINAL_PATH,'Viral Pneumonia/'))
 imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
 
 DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=123)
@@ -1599,7 +1603,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
 
 
     
-![png](output_76_0.png)
+![png](output_77_0.png)
     
 
 
@@ -1612,7 +1616,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Normal class
 ##################################
-path_normal = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Normal/'
+path_normal = (os.path.join("..", DATASETS_ORIGINAL_PATH,'Normal/'))
 imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
 
 DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=123)
@@ -1634,7 +1638,7 @@ for x0, y0, path in zip(DF_sample['Min'], DF_sample['StDev'],paths):
 
 
     
-![png](output_77_0.png)
+![png](output_78_0.png)
     
 
 
@@ -1668,7 +1672,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 
 
     
-![png](output_78_0.png)
+![png](output_79_0.png)
     
 
 
@@ -1681,7 +1685,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Covid-19 class
 ##################################
-path_covid = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/COVID/'
+path_covid = (os.path.join("..", DATASETS_ORIGINAL_PATH,'COVID/'))
 imageEDA_covid = imageEDA.loc[imageEDA['Class'] == 'Covid-19']
 
 DF_sample = imageEDA_covid.sample(frac=1.0, replace=False, random_state=123)
@@ -1703,7 +1707,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 
 
     
-![png](output_79_0.png)
+![png](output_80_0.png)
     
 
 
@@ -1716,7 +1720,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Viral Pneumonia class
 ##################################
-path_viral_pneumonia = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Viral Pneumonia/'
+path_viral_pneumonia = (os.path.join("..", DATASETS_ORIGINAL_PATH,'Viral Pneumonia/'))
 imageEDA_viral_pneumonia = imageEDA.loc[imageEDA['Class'] == 'Viral Pneumonia']
 
 DF_sample = imageEDA_viral_pneumonia.sample(frac=1.0, replace=False, random_state=123)
@@ -1738,7 +1742,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 
 
     
-![png](output_80_0.png)
+![png](output_81_0.png)
     
 
 
@@ -1751,7 +1755,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 # represented as actual images
 # for the Normal class
 ##################################
-path_normal = 'C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/Normal/'
+path_normal = (os.path.join("..", DATASETS_ORIGINAL_PATH,'Normal/'))
 imageEDA_normal = imageEDA.loc[imageEDA['Class'] == 'Healthy']
 
 DF_sample = imageEDA_normal.sample(frac=1.0, replace=False, random_state=123)
@@ -1773,7 +1777,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 
 
     
-![png](output_81_0.png)
+![png](output_82_0.png)
     
 
 
@@ -1782,7 +1786,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 #### 1.3.5.1 Premodelling Data Description <a class="anchor" id="1.3.5.1"></a>
 
 1. Training data included **2880 augmented images** representing 80% of the dataset.
-2. Validation data included **720 non-augmented images** representing 20% of the dataset.
+2. Validation data included **720 original images** representing 20% of the dataset.
 3. Candidate models were formulated using common layers as follows:
     * 3.1 **Convolutional Layer** - extracts features from input images using convolutional filters
     * 3.2 **Maximum Pooling Layer** - Reduces spatial dimensions and downsamples feature maps
@@ -1857,10 +1861,9 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
         * output size = 3
         * number of parameters = 387
 5. The model performance on the validation set for all image categories is summarized as follows:
-    * **Precision** = 0.7906
-    * **Recall** = 0.7819
-    * **F1 Score** = 0.7825
-
+    * **Precision** = 0.9202
+    * **Recall** = 0.9125
+    * **F1 Score** = 0.9129
 
 
 ```python
@@ -1904,14 +1907,6 @@ model_nr.add(Dense(units=num_classes, activation='softmax'))
 model_nr.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[Recall()])
 ```
 
-    WARNING:tensorflow:From C:\Users\John pauline magno\AppData\Roaming\Python\Python311\site-packages\keras\backend.py:873: The name tf.get_default_graph is deprecated. Please use tf.compat.v1.get_default_graph instead.
-    
-    WARNING:tensorflow:From C:\Users\John pauline magno\AppData\Roaming\Python\Python311\site-packages\keras\layers\pooling\max_pooling2d.py:160: The name tf.nn.max_pool is deprecated. Please use tf.nn.max_pool2d instead.
-    
-    WARNING:tensorflow:From C:\Users\John pauline magno\AppData\Roaming\Python\Python311\site-packages\keras\optimizers\__init__.py:300: The name tf.train.Optimizer is deprecated. Please use tf.compat.v1.train.Optimizer instead.
-    
-    
-
 
 ```python
 ##################################
@@ -1921,31 +1916,52 @@ model_nr.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[Rec
 print(model_nr.summary())
 ```
 
-    Model: "sequential"
-    _________________________________________________________________
-     Layer (type)                Output Shape              Param #   
-    =================================================================
-     conv2d (Conv2D)             (None, 299, 299, 32)      320       
-                                                                     
-     max_pooling2d (MaxPooling2D  (None, 149, 149, 32)     0         
-     )                                                               
-                                                                     
-     conv2d_1 (Conv2D)           (None, 149, 149, 64)      18496     
-                                                                     
-     max_pooling2d_1 (MaxPooling  (None, 74, 74, 64)       0         
-     2D)                                                             
-                                                                     
-     flatten (Flatten)           (None, 350464)            0         
-                                                                     
-     dense (Dense)               (None, 128)               44859520  
-                                                                     
-     dense_1 (Dense)             (None, 3)                 387       
-                                                                     
-    =================================================================
-    Total params: 44,878,723
-    Trainable params: 44,878,723
-    Non-trainable params: 0
-    _________________________________________________________________
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ conv2d (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">320</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">350464</span>)              │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │      <span style="color: #00af00; text-decoration-color: #00af00">44,859,520</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">3</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">387</span> │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,723</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,723</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
+</pre>
+
+
+
     None
     
 
@@ -2025,10 +2041,6 @@ model_nr_history = model_nr.fit(train_gen,
                                 verbose=0)
 ```
 
-    WARNING:tensorflow:From C:\Users\John pauline magno\AppData\Roaming\Python\Python311\site-packages\keras\utils\tf_utils.py:490: The name tf.ragged.RaggedTensorValue is deprecated. Please use tf.compat.v1.ragged.RaggedTensorValue instead.
-    
-    
-
 
 ```python
 ##################################
@@ -2039,7 +2051,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 11s 251ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 125ms/step
     
 
 
@@ -2054,7 +2066,7 @@ plot_training_history(model_nr_history, 'CNN With No Regularization : ')
 
 
     
-![png](output_93_0.png)
+![png](output_94_0.png)
     
 
 
@@ -2094,9 +2106,13 @@ ax.set_title('CNN With No Regularization : Validation Set Confusion Matrix',font
 keras.backend.clear_session()
 ```
 
+    WARNING:tensorflow:From D:\Github_Codes\ProjectPortfolio\Portfolio_Project_44\cstudy_venv\Lib\site-packages\keras\src\backend\common\global_state.py:82: The name tf.reset_default_graph is deprecated. Please use tf.compat.v1.reset_default_graph instead.
+    
+    
+
 
     
-![png](output_94_0.png)
+![png](output_95_1.png)
     
 
 
@@ -2166,30 +2182,30 @@ model_nr_all_df
   <tbody>
     <tr>
       <th>COVID</th>
-      <td>0.890295</td>
-      <td>0.879167</td>
-      <td>0.884696</td>
+      <td>0.959459</td>
+      <td>0.887500</td>
+      <td>0.922078</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Normal</th>
-      <td>0.671378</td>
-      <td>0.791667</td>
-      <td>0.726577</td>
+      <td>0.833922</td>
+      <td>0.983333</td>
+      <td>0.902486</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Viral Pneumonia</th>
-      <td>0.810000</td>
-      <td>0.675000</td>
-      <td>0.736364</td>
+      <td>0.967442</td>
+      <td>0.866667</td>
+      <td>0.914286</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Total</th>
-      <td>0.790558</td>
-      <td>0.781944</td>
-      <td>0.782546</td>
+      <td>0.920275</td>
+      <td>0.912500</td>
+      <td>0.912950</td>
       <td>NaN</td>
     </tr>
   </tbody>
@@ -2284,10 +2300,9 @@ model_nr_all_summary = pd.DataFrame(zip(model_nr_model_list,
         * output size = 3
         * number of parameters = 387
 5. The model performance on the validation set for all image categories is summarized as follows:
-    * **Precision** = 0.8565
-    * **Recall** = 0.8472
-    * **F1 Score** = 0.8457
-    
+    * **Precision** = 0.9242
+    * **Recall** = 0.9208
+    * **F1 Score** = 0.9210
 
 
 ```python
@@ -2297,6 +2312,7 @@ model_nr_all_summary = pd.DataFrame(zip(model_nr_model_list,
 ##################################
 set_seed()
 batch_size = 16
+input_shape = (299, 299, 1)
 model_dr = Sequential()
 model_dr.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='Same', input_shape=(299, 299, 1)))
 model_dr.add(MaxPooling2D(pool_size=(2, 2)))
@@ -2322,33 +2338,54 @@ model_dr.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[Rec
 print(model_dr.summary())
 ```
 
-    Model: "sequential"
-    _________________________________________________________________
-     Layer (type)                Output Shape              Param #   
-    =================================================================
-     conv2d (Conv2D)             (None, 299, 299, 32)      320       
-                                                                     
-     max_pooling2d (MaxPooling2D  (None, 149, 149, 32)     0         
-     )                                                               
-                                                                     
-     conv2d_1 (Conv2D)           (None, 149, 149, 64)      18496     
-                                                                     
-     dropout (Dropout)           (None, 149, 149, 64)      0         
-                                                                     
-     max_pooling2d_1 (MaxPooling  (None, 74, 74, 64)       0         
-     2D)                                                             
-                                                                     
-     flatten (Flatten)           (None, 350464)            0         
-                                                                     
-     dense (Dense)               (None, 128)               44859520  
-                                                                     
-     dense_1 (Dense)             (None, 3)                 387       
-                                                                     
-    =================================================================
-    Total params: 44,878,723
-    Trainable params: 44,878,723
-    Non-trainable params: 0
-    _________________________________________________________________
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ conv2d (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">320</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">350464</span>)              │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │      <span style="color: #00af00; text-decoration-color: #00af00">44,859,520</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">3</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">387</span> │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,723</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,723</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
+</pre>
+
+
+
     None
     
 
@@ -2423,7 +2460,7 @@ print("\nTotal Parameters in the Model:", total_parameters)
 epochs = 100
 set_seed()
 model_dr_history = model_dr.fit(train_gen, 
-                                steps_per_epoch=len(train_gen) // batch_size, 
+                                steps_per_epoch=len(train_gen) // batch_size,   
                                 validation_steps=len(test_gen) // batch_size, 
                                 validation_data=test_gen, 
                                 epochs=epochs,
@@ -2440,7 +2477,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 123ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 124ms/step
     
 
 
@@ -2455,7 +2492,7 @@ plot_training_history(model_dr_history, 'CNN With Dropout Regularization : ')
 
 
     
-![png](output_105_0.png)
+![png](output_106_0.png)
     
 
 
@@ -2498,7 +2535,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_106_0.png)
+![png](output_107_0.png)
     
 
 
@@ -2568,30 +2605,30 @@ model_dr_all_df
   <tbody>
     <tr>
       <th>COVID</th>
-      <td>0.906504</td>
-      <td>0.929167</td>
-      <td>0.917695</td>
+      <td>0.960000</td>
+      <td>0.900000</td>
+      <td>0.929032</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Normal</th>
-      <td>0.904255</td>
-      <td>0.708333</td>
-      <td>0.794393</td>
+      <td>0.865672</td>
+      <td>0.966667</td>
+      <td>0.913386</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Viral Pneumonia</th>
-      <td>0.758741</td>
-      <td>0.904167</td>
-      <td>0.825095</td>
+      <td>0.947137</td>
+      <td>0.895833</td>
+      <td>0.920771</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Total</th>
-      <td>0.856500</td>
-      <td>0.847222</td>
-      <td>0.845728</td>
+      <td>0.924269</td>
+      <td>0.920833</td>
+      <td>0.921063</td>
       <td>NaN</td>
     </tr>
   </tbody>
@@ -2690,9 +2727,9 @@ model_dr_all_summary = pd.DataFrame(zip(model_dr_model_list,
         * output size = 3
         * number of parameters = 387
 5. The model performance on the validation set for all image categories is summarized as follows:
-    * **Precision** = 0.9111
-    * **Recall** = 0.9097
-    * **F1 Score** = 0.9097
+    * **Precision** = 0.9107
+    * **Recall** = 0.9083
+    * **F1 Score** = 0.9081
     
 
 
@@ -2704,15 +2741,15 @@ model_dr_all_summary = pd.DataFrame(zip(model_dr_model_list,
 set_seed()
 batch_size = 16
 model_bnr = Sequential()
-model_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='Same', input_shape=(299, 299, 1)))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding='Same', activation='relu'))
-model_bnr.add(BatchNormalization())
-model_bnr.add(Activation('relu'))
-model_bnr.add(MaxPooling2D(pool_size=(2, 2)))
-model_bnr.add(Flatten())
-model_bnr.add(Dense(units=128, activation='relu'))
-model_bnr.add(Dense(units=num_classes, activation='softmax'))
+model_bnr.add(Conv2D(filters=32, kernel_size=(3, 3), activation='relu', padding='Same', input_shape=(299, 299, 1), name="conv2d"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="max_pooling2d"))
+model_bnr.add(Conv2D(filters=64, kernel_size=(3, 3), padding='Same', activation='relu', name="conv2d_1"))
+model_bnr.add(BatchNormalization(name="batch_normalization"))
+model_bnr.add(Activation('relu', name="activation"))
+model_bnr.add(MaxPooling2D(pool_size=(2, 2), name="max_pooling2d_1"))
+model_bnr.add(Flatten(name="flatten"))
+model_bnr.add(Dense(units=128, activation='relu', name="dense"))
+model_bnr.add(Dense(units=num_classes, activation='softmax', name="dense_1"))
 
 ##################################
 # Compiling the network layers
@@ -2729,36 +2766,57 @@ model_bnr.compile(loss='categorical_crossentropy', optimizer='adam', metrics=[Re
 print(model_bnr.summary())
 ```
 
-    Model: "sequential"
-    _________________________________________________________________
-     Layer (type)                Output Shape              Param #   
-    =================================================================
-     conv2d (Conv2D)             (None, 299, 299, 32)      320       
-                                                                     
-     max_pooling2d (MaxPooling2D  (None, 149, 149, 32)     0         
-     )                                                               
-                                                                     
-     conv2d_1 (Conv2D)           (None, 149, 149, 64)      18496     
-                                                                     
-     batch_normalization (BatchN  (None, 149, 149, 64)     256       
-     ormalization)                                                   
-                                                                     
-     activation (Activation)     (None, 149, 149, 64)      0         
-                                                                     
-     max_pooling2d_1 (MaxPooling  (None, 74, 74, 64)       0         
-     2D)                                                             
-                                                                     
-     flatten (Flatten)           (None, 350464)            0         
-                                                                     
-     dense (Dense)               (None, 128)               44859520  
-                                                                     
-     dense_1 (Dense)             (None, 3)                 387       
-                                                                     
-    =================================================================
-    Total params: 44,878,979
-    Trainable params: 44,878,851
-    Non-trainable params: 128
-    _________________________________________________________________
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ conv2d (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">320</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ batch_normalization                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">256</span> │
+│ (<span style="color: #0087ff; text-decoration-color: #0087ff">BatchNormalization</span>)                 │                             │                 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ activation (<span style="color: #0087ff; text-decoration-color: #0087ff">Activation</span>)              │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">350464</span>)              │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │      <span style="color: #00af00; text-decoration-color: #00af00">44,859,520</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">3</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">387</span> │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,979</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,851</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">128</span> (512.00 B)
+</pre>
+
+
+
     None
     
 
@@ -2835,7 +2893,7 @@ print("\nTotal Parameters in the Model:", total_parameters)
 epochs = 100
 set_seed()
 model_bnr_history = model_bnr.fit(train_gen, 
-                                  steps_per_epoch=len(train_gen) // batch_size,
+                                  steps_per_epoch=len(train_gen) // batch_size,  
                                   validation_steps=len(test_gen) // batch_size, 
                                   validation_data=test_gen, epochs=epochs,
                                   verbose=0)
@@ -2851,7 +2909,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 139ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 132ms/step
     
 
 
@@ -2866,7 +2924,7 @@ plot_training_history(model_bnr_history, 'CNN With Batch Normalization Regulariz
 
 
     
-![png](output_117_0.png)
+![png](output_118_0.png)
     
 
 
@@ -2909,7 +2967,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_118_0.png)
+![png](output_119_0.png)
     
 
 
@@ -2979,30 +3037,30 @@ model_bnr_all_df
   <tbody>
     <tr>
       <th>COVID</th>
-      <td>0.943231</td>
-      <td>0.900000</td>
-      <td>0.921109</td>
+      <td>0.902834</td>
+      <td>0.929167</td>
+      <td>0.915811</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Normal</th>
-      <td>0.876448</td>
-      <td>0.945833</td>
-      <td>0.909820</td>
+      <td>0.875969</td>
+      <td>0.941667</td>
+      <td>0.907631</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Viral Pneumonia</th>
-      <td>0.913793</td>
-      <td>0.883333</td>
-      <td>0.898305</td>
+      <td>0.953488</td>
+      <td>0.854167</td>
+      <td>0.901099</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Total</th>
-      <td>0.911157</td>
-      <td>0.909722</td>
-      <td>0.909744</td>
+      <td>0.910764</td>
+      <td>0.908333</td>
+      <td>0.908180</td>
       <td>NaN</td>
     </tr>
   </tbody>
@@ -3106,10 +3164,9 @@ model_bnr_all_summary = pd.DataFrame(zip(model_bnr_model_list,
         * output size = 3
         * number of parameters = 387
 5. The model performance on the validation set for all classes is summarized as follows:
-    * **Precision** = 0.8842
-    * **Recall** = 0.8736
-    * **F1 Score** = 0.8744
-    
+    * **Precision** = 0.9182
+    * **Recall** = 0.9166
+    * **F1 Score** = 0.9167
 
 
 ```python
@@ -3147,38 +3204,59 @@ model_dr_bnr.compile(loss='categorical_crossentropy', optimizer='adam', metrics=
 print(model_dr_bnr.summary())
 ```
 
-    Model: "sequential"
-    _________________________________________________________________
-     Layer (type)                Output Shape              Param #   
-    =================================================================
-     conv2d (Conv2D)             (None, 299, 299, 32)      320       
-                                                                     
-     max_pooling2d (MaxPooling2D  (None, 149, 149, 32)     0         
-     )                                                               
-                                                                     
-     conv2d_1 (Conv2D)           (None, 149, 149, 64)      18496     
-                                                                     
-     batch_normalization (BatchN  (None, 149, 149, 64)     256       
-     ormalization)                                                   
-                                                                     
-     activation (Activation)     (None, 149, 149, 64)      0         
-                                                                     
-     dropout (Dropout)           (None, 149, 149, 64)      0         
-                                                                     
-     max_pooling2d_1 (MaxPooling  (None, 74, 74, 64)       0         
-     2D)                                                             
-                                                                     
-     flatten (Flatten)           (None, 350464)            0         
-                                                                     
-     dense (Dense)               (None, 128)               44859520  
-                                                                     
-     dense_1 (Dense)             (None, 3)                 387       
-                                                                     
-    =================================================================
-    Total params: 44,878,979
-    Trainable params: 44,878,851
-    Non-trainable params: 128
-    _________________________________________________________________
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "sequential"</span>
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ conv2d (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">320</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ batch_normalization                  │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">256</span> │
+│ (<span style="color: #0087ff; text-decoration-color: #0087ff">BatchNormalization</span>)                 │                             │                 │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ activation (<span style="color: #0087ff; text-decoration-color: #0087ff">Activation</span>)              │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">350464</span>)              │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │      <span style="color: #00af00; text-decoration-color: #00af00">44,859,520</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">3</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">387</span> │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,979</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,851</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">128</span> (512.00 B)
+</pre>
+
+
+
     None
     
 
@@ -3259,7 +3337,7 @@ print("\nTotal Parameters in the Model:", total_parameters)
 epochs = 100
 set_seed()
 model_dr_bnr_history = model_dr_bnr.fit(train_gen,
-                                        steps_per_epoch=len(train_gen) // batch_size,
+                                        steps_per_epoch=len(train_gen) // batch_size,   
                                         validation_steps=len(test_gen) // batch_size, 
                                         validation_data=test_gen, 
                                         epochs=epochs,
@@ -3277,7 +3355,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    45/45 [==============================] - 6s 134ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 136ms/step
     
 
 
@@ -3293,7 +3371,7 @@ plot_training_history(model_dr_bnr_history, 'CNN With Dropout and Batch Normaliz
 
 
     
-![png](output_129_0.png)
+![png](output_130_0.png)
     
 
 
@@ -3339,7 +3417,7 @@ keras.backend.clear_session()
 
 
     
-![png](output_130_0.png)
+![png](output_131_0.png)
     
 
 
@@ -3413,30 +3491,30 @@ model_dr_bnr_all_df
   <tbody>
     <tr>
       <th>COVID</th>
-      <td>0.950450</td>
-      <td>0.879167</td>
-      <td>0.913420</td>
+      <td>0.959459</td>
+      <td>0.887500</td>
+      <td>0.922078</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Normal</th>
-      <td>0.779310</td>
-      <td>0.941667</td>
-      <td>0.852830</td>
+      <td>0.906504</td>
+      <td>0.929167</td>
+      <td>0.917695</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Viral Pneumonia</th>
-      <td>0.923077</td>
-      <td>0.800000</td>
-      <td>0.857143</td>
+      <td>0.888889</td>
+      <td>0.933333</td>
+      <td>0.910569</td>
       <td>240.0</td>
     </tr>
     <tr>
       <th>Total</th>
-      <td>0.884279</td>
-      <td>0.873611</td>
-      <td>0.874464</td>
+      <td>0.918284</td>
+      <td>0.916667</td>
+      <td>0.916781</td>
       <td>NaN</td>
     </tr>
   </tbody>
@@ -3478,25 +3556,25 @@ model_dr_bnr_all_summary = pd.DataFrame(zip(model_dr_bnr_model_list,
 ### 1.3.6 Model Selection <a class="anchor" id="1.3.6"></a>
 
 1. The **CNN Model With No Regularization** demonstrated the following validation set performance for all image categories:
-    * **Precision** = 0.7906
-    * **Recall** = 0.7819
-    * **F1 Score** = 0.7825      
+    * **Precision** = 0.9202
+    * **Recall** = 0.9125
+    * **F1 Score** = 0.9129    
 2. The **CNN Model With Dropout Regularization** demonstrated the following validation set performance for all image categories:
-    * **Precision** = 0.8565
-    * **Recall** = 0.8472
-    * **F1 Score** = 0.8457
+    * **Precision** = 0.9242
+    * **Recall** = 0.9208
+    * **F1 Score** = 0.9210
 3. The **CNN Model With Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
-    * **Precision** = 0.9111
-    * **Recall** = 0.9097
-    * **F1 Score** = 0.9097
+    * **Precision** = 0.9107
+    * **Recall** = 0.9083
+    * **F1 Score** = 0.9081
 4. The **CNN Model With Dropout and Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
-    * **Precision** = 0.8842
-    * **Recall** = 0.8736
-    * **F1 Score** = 0.8744
-5. The **CNN Model With Batch Normalization Regularization** had the best validation set performance and was selected among all candidate models.
-    * **Precision** = 0.9111
-    * **Recall** = 0.9097
-    * **F1 Score** = 0.9097
+    * **Precision** = 0.9182
+    * **Recall** = 0.9166
+    * **F1 Score** = 0.9167
+5. The **CNN Model With Dropout Regularization** had the best validation set performance and was selected among all candidate models.
+    * **Precision** = 0.9242
+    * **Recall** = 0.9208
+    * **F1 Score** = 0.9210
 6. While the classification results have been sufficiently high, the current study can be further extended to achieve optimal model performance through the following:
     * Conduct model hyperparameter tuning given sufficient analysis time and higher computing power
     * Formulate deeper neural network architectures to better capture spatial hierarchies and features in the input images
@@ -3575,31 +3653,31 @@ cnn_model_performance_comparison_precision_plot
   <tbody>
     <tr>
       <th>COVID</th>
-      <td>0.890295</td>
-      <td>0.906504</td>
-      <td>0.943231</td>
-      <td>0.950450</td>
+      <td>0.959459</td>
+      <td>0.960000</td>
+      <td>0.902834</td>
+      <td>0.959459</td>
     </tr>
     <tr>
       <th>Normal</th>
-      <td>0.671378</td>
-      <td>0.904255</td>
-      <td>0.876448</td>
-      <td>0.779310</td>
+      <td>0.833922</td>
+      <td>0.865672</td>
+      <td>0.875969</td>
+      <td>0.906504</td>
     </tr>
     <tr>
       <th>Viral Pneumonia</th>
-      <td>0.810000</td>
-      <td>0.758741</td>
-      <td>0.913793</td>
-      <td>0.923077</td>
+      <td>0.967442</td>
+      <td>0.947137</td>
+      <td>0.953488</td>
+      <td>0.888889</td>
     </tr>
     <tr>
       <th>Total</th>
-      <td>0.790558</td>
-      <td>0.856500</td>
-      <td>0.911157</td>
-      <td>0.884279</td>
+      <td>0.920275</td>
+      <td>0.924269</td>
+      <td>0.910764</td>
+      <td>0.918284</td>
     </tr>
   </tbody>
 </table>
@@ -3627,7 +3705,7 @@ for container in cnn_model_performance_comparison_precision_plot.containers:
 
 
     
-![png](output_137_0.png)
+![png](output_138_0.png)
     
 
 
@@ -3689,31 +3767,31 @@ cnn_model_performance_comparison_recall_plot
   <tbody>
     <tr>
       <th>COVID</th>
-      <td>0.879167</td>
-      <td>0.929167</td>
+      <td>0.887500</td>
       <td>0.900000</td>
-      <td>0.879167</td>
+      <td>0.929167</td>
+      <td>0.887500</td>
     </tr>
     <tr>
       <th>Normal</th>
-      <td>0.791667</td>
-      <td>0.708333</td>
-      <td>0.945833</td>
+      <td>0.983333</td>
+      <td>0.966667</td>
       <td>0.941667</td>
+      <td>0.929167</td>
     </tr>
     <tr>
       <th>Viral Pneumonia</th>
-      <td>0.675000</td>
-      <td>0.904167</td>
-      <td>0.883333</td>
-      <td>0.800000</td>
+      <td>0.866667</td>
+      <td>0.895833</td>
+      <td>0.854167</td>
+      <td>0.933333</td>
     </tr>
     <tr>
       <th>Total</th>
-      <td>0.781944</td>
-      <td>0.847222</td>
-      <td>0.909722</td>
-      <td>0.873611</td>
+      <td>0.912500</td>
+      <td>0.920833</td>
+      <td>0.908333</td>
+      <td>0.916667</td>
     </tr>
   </tbody>
 </table>
@@ -3741,7 +3819,7 @@ for container in cnn_model_performance_comparison_recall_plot.containers:
 
 
     
-![png](output_140_0.png)
+![png](output_141_0.png)
     
 
 
@@ -3803,31 +3881,31 @@ cnn_model_performance_comparison_fscore_plot
   <tbody>
     <tr>
       <th>COVID</th>
-      <td>0.884696</td>
-      <td>0.917695</td>
-      <td>0.921109</td>
-      <td>0.913420</td>
+      <td>0.922078</td>
+      <td>0.929032</td>
+      <td>0.915811</td>
+      <td>0.922078</td>
     </tr>
     <tr>
       <th>Normal</th>
-      <td>0.726577</td>
-      <td>0.794393</td>
-      <td>0.909820</td>
-      <td>0.852830</td>
+      <td>0.902486</td>
+      <td>0.913386</td>
+      <td>0.907631</td>
+      <td>0.917695</td>
     </tr>
     <tr>
       <th>Viral Pneumonia</th>
-      <td>0.736364</td>
-      <td>0.825095</td>
-      <td>0.898305</td>
-      <td>0.857143</td>
+      <td>0.914286</td>
+      <td>0.920771</td>
+      <td>0.901099</td>
+      <td>0.910569</td>
     </tr>
     <tr>
       <th>Total</th>
-      <td>0.782546</td>
-      <td>0.845728</td>
-      <td>0.909744</td>
-      <td>0.874464</td>
+      <td>0.912950</td>
+      <td>0.921063</td>
+      <td>0.908180</td>
+      <td>0.916781</td>
     </tr>
   </tbody>
 </table>
@@ -3855,7 +3933,7 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 
 
     
-![png](output_143_0.png)
+![png](output_144_0.png)
     
 
 
@@ -3863,8 +3941,8 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 
 #### 1.3.7.1 Convolutional Layer Filter Visualization <a class="anchor" id="1.3.7.1"></a>
 
-1. The visualized filters using the first convolutional layer of the selection model - **CNN Model With Batch Normalization Regularization** showed low-level features including edges and textures.
-2. The visualized filters using the second and final convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** showed mid-level to high-level features including patterns and shapes.
+1. The visualized filters using the first convolutional layer of the selection model - **CNN Model With Dropout Regularization** showed low-level features including edges and textures.
+2. The visualized filters using the second and final convolutional layer of the selected model - **CNN Model With Dropout Regularization** showed mid-level to high-level features including patterns and shapes.
 
 
 ```python
@@ -3872,9 +3950,9 @@ for container in cnn_model_performance_comparison_fscore_plot.containers:
 # Visualizing the learned and updated filters
 # for the first convolutional layer
 # from the selected CNN model defined as
-# CNN with batch normalization regularization
+# CNN with dropout regularization
 ##################################
-conv2d_0_filters, conv2d_0_biases = model_bnr.layers[0].get_weights()
+conv2d_0_filters, conv2d_0_biases = model_dr.layers[0].get_weights()
 plt.figure(figsize=(10, 6))
 for i in range(conv2d_0_filters.shape[3]):
     plt.subplot(4, 8, i+1)
@@ -3885,7 +3963,7 @@ plt.show()
 
 
     
-![png](output_146_0.png)
+![png](output_147_0.png)
     
 
 
@@ -3895,9 +3973,9 @@ plt.show()
 # Visualizing the learned and updated filters
 # for the second convolutional layer
 # from the selected CNN model defined as
-# CNN with batch normalization regularization
+# CNN with dropout regularization
 ##################################
-conv2d_1_filters, conv2d_1_biases = model_bnr.layers[2].get_weights()
+conv2d_1_filters, conv2d_1_biases = model_dr.layers[2].get_weights()
 plt.figure(figsize=(10, 12))
 for i in range(conv2d_1_filters.shape[3]):
     plt.subplot(8, 8, i+1)
@@ -3908,13 +3986,13 @@ plt.show()
 
 
     
-![png](output_147_0.png)
+![png](output_148_0.png)
     
 
 
 #### 1.3.7.2 Gradient-Weighted Class Activation Mapping <a class="anchor" id="1.3.7.2"></a>
 
-1. The gradient-weighted class activation map for  the first convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** highlighted general image features that lead to the activation of the different image categories.
+1. The gradient-weighted class activation map for  the first convolutional layer of the selected model - **CNN Model With Dropout Regularization** highlighted general image features that lead to the activation of the different image categories.
     * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
         * 1.1.1 Denser intensity for the part of the image pertaining to the lung
         * 1.1.2 Relatively invisible outlines for the part of the image pertaining to the bronchial structure
@@ -3924,19 +4002,16 @@ plt.show()
     * 1.3 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
         * 1.3.1 Hazy intensity for the part of the image pertaining to the lung
         * 1.3.2 Relatively visible outlines for the part of the image pertaining to the bronchial structure
-2. The gradient-weighted class activation map for  the second and final convolutional layer of the selected model - **CNN Model With Batch Normalization Regularization** highlighted specific image features that lead to the activation of the different image categories.
+2. The gradient-weighted class activation map for  the second and final convolutional layer of the selected model - **CNN Model With Dropout Regularization** highlighted specific image features that lead to the activation of the different image categories.
     * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
         * 1.1.1 Lung fields appeared patchy and multifocal
-        * 1.1.2 Pulmonary vessels and bronchial structures are not clearly visible with signs of obstruction or infiltration
-        * 1.1.3 Both lungs appear generally asymmetrical in size and density
+        * 1.1.2 Pulmonary vessels and bronchial structures are not clearly visible without signs of obstruction or infiltration
     * 1.2 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
         * 1.2.1 Clear lung fields without significant opacities or consolidations
         * 1.2.2 Pulmonary vessels and bronchial structures are clearly visible without signs of obstruction or infiltration
-        * 1.2.3 Both lungs appear generally symmetrical in size and density
     * 1.3 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
         * 1.3.1 Lung fields appeared patchy and multifocal
         * 1.3.2 Pulmonary vessels and bronchial structures are clearly visible but with signs of obstruction or infiltration
-        * 1.3.3 Both lungs appear generally symmetrical in size and density
 
 
 
@@ -3944,10 +4019,10 @@ plt.show()
 ##################################
 # Gathering the actual and predicted classes
 # from the selected CNN model defined as
-# CNN with batch normalization regularization
+# CNN with dropout regularization
 ##################################
-model_bnr_predictions = np.array(list(map(lambda x: np.argmax(x), model_bnr_y_pred)))
-model_bnr_y_true = test_gen.classes
+model_dr_predictions = np.array(list(map(lambda x: np.argmax(x), model_dr_y_pred)))
+model_dr_y_true = test_gen.classes
 ```
 
 
@@ -3955,15 +4030,15 @@ model_bnr_y_true = test_gen.classes
 ##################################
 # Consolidating the actual and predicted classes
 # from the selected CNN model defined as
-# CNN with batch normalization regularization
+# CNN with dropout regularization
 ##################################
 class_indices = test_gen.class_indices
 indices = {v:k for k,v in class_indices.items()}
 filenames = test_gen.filenames
 test_gen_df = pd.DataFrame()
 test_gen_df['FileName'] = filenames
-test_gen_df['Actual_Category'] = model_bnr_y_true
-test_gen_df['Predicted_Category'] = model_bnr_predictions
+test_gen_df['Actual_Category'] = model_dr_y_true
+test_gen_df['Predicted_Category'] = model_dr_predictions
 test_gen_df['Actual_Category'] = test_gen_df['Actual_Category'].apply(lambda x: indices[x])
 test_gen_df['Predicted_Category'] = test_gen_df['Predicted_Category'].apply(lambda x: indices[x])
 test_gen_df.loc[test_gen_df['Actual_Category']==test_gen_df['Predicted_Category'],'Matched_Category_Prediction'] = True
@@ -4024,8 +4099,8 @@ test_gen_df.head(10)
       <th>3</th>
       <td>COVID\COVID-1000.png</td>
       <td>COVID</td>
-      <td>Viral Pneumonia</td>
-      <td>False</td>
+      <td>COVID</td>
+      <td>True</td>
     </tr>
     <tr>
       <th>4</th>
@@ -4105,6 +4180,7 @@ def readImage(path):
 # to display the sampled images
 # with the actual and predicted categories
 ##################################
+base_path = (os.path.join("..", DATASETS_ORIGINAL_PATH))
 def display_images(temp_df):
     temp_df = temp_df.reset_index(drop=True)
     plt.figure(figsize = (20 , 20))
@@ -4113,9 +4189,9 @@ def display_images(temp_df):
         n+=1
         plt.subplot(5 , 5, n)
         plt.subplots_adjust(hspace = 0.5 , wspace = 0.3)
-        image = readImage(f"C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/{temp_df.FileName[i]}")
+        image = readImage(f"{base_path}\\{temp_df.FileName[i]}")
         plt.imshow(image)
-        plt.title(f'A: {temp_df.Actual_Category[i]} P: {temp_df.Predicted_Category[i]}')        
+        plt.title(f'A: {temp_df.Actual_Category[i]} P: {temp_df.Predicted_Category[i]}')      
 ```
 
 
@@ -4129,7 +4205,7 @@ display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']==True])
 
 
     
-![png](output_154_0.png)
+![png](output_155_0.png)
     
 
 
@@ -4144,24 +4220,131 @@ display_images(test_gen_df[test_gen_df['Matched_Category_Prediction']!=True])
 
 
     
-![png](output_155_0.png)
+![png](output_156_0.png)
     
 
 
 
 ```python
 ##################################
+# Recreating the CNN model defined as
+# CNN with dropout regularization
+# using the Functional API structure
+##################################
+
+##################################
+# Defining the input layer
+##################################
+fmodel_input_layer = Input(shape=(299, 299, 1), name="input_layer")
+
+##################################
+# Using the layers from the Sequential model
+# as functions in the Functional API
+##################################
+set_seed()
+fmodel_conv2d_layer = model_dr.layers[0](fmodel_input_layer) # Conv2D layer
+fmodel_maxpooling2d_layer = model_dr.layers[1](fmodel_conv2d_layer) # MaxPooling2D layer
+fmodel_conv2d_1_layer = model_dr.layers[2](fmodel_maxpooling2d_layer) # Conv2D layer
+fmodel_dropout_layer = model_dr.layers[3](fmodel_conv2d_1_layer) # Dropout layer
+fmodel_maxpooling2d_1_layer = model_dr.layers[4](fmodel_dropout_layer) # MaxPooling2D layer
+fmodel_flatten_layer = model_dr.layers[5](fmodel_maxpooling2d_1_layer) # Flatten layer
+fmodel_dense_layer = model_dr.layers[6](fmodel_flatten_layer) # Dense layer (128 units)
+fmodel_output_layer = model_dr.layers[7](fmodel_dense_layer) # Dense layer (num_classes units)
+
+##################################
+# Creating the Functional API model
+##################################
+model_dr_functional_api = Model(inputs=fmodel_input_layer, outputs=fmodel_output_layer, name="model_dr_fapi")
+
+##################################
+# Compiling the Functional API model
+# with the same parameters
+##################################
+set_seed()
+model_dr_functional_api.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=[Recall()])
+
+##################################
+# Displaying the model summary
+# for CNN with dropout regularization
+##################################
+print(model_dr_functional_api.summary())
+```
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold">Model: "model_dr_fapi"</span>
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace">┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃<span style="font-weight: bold"> Layer (type)                         </span>┃<span style="font-weight: bold"> Output Shape                </span>┃<span style="font-weight: bold">         Param # </span>┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ input_layer (<span style="color: #0087ff; text-decoration-color: #0087ff">InputLayer</span>)             │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">1</span>)         │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">299</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │             <span style="color: #00af00; text-decoration-color: #00af00">320</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)         │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">32</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ conv2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Conv2D</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │          <span style="color: #00af00; text-decoration-color: #00af00">18,496</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dropout (<span style="color: #0087ff; text-decoration-color: #0087ff">Dropout</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">149</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)        │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ max_pooling2d_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">MaxPooling2D</span>)       │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">74</span>, <span style="color: #00af00; text-decoration-color: #00af00">64</span>)          │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ flatten (<span style="color: #0087ff; text-decoration-color: #0087ff">Flatten</span>)                    │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">350464</span>)              │               <span style="color: #00af00; text-decoration-color: #00af00">0</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                        │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">128</span>)                 │      <span style="color: #00af00; text-decoration-color: #00af00">44,859,520</span> │
+├──────────────────────────────────────┼─────────────────────────────┼─────────────────┤
+│ dense_1 (<span style="color: #0087ff; text-decoration-color: #0087ff">Dense</span>)                      │ (<span style="color: #00d7ff; text-decoration-color: #00d7ff">None</span>, <span style="color: #00af00; text-decoration-color: #00af00">3</span>)                   │             <span style="color: #00af00; text-decoration-color: #00af00">387</span> │
+└──────────────────────────────────────┴─────────────────────────────┴─────────────────┘
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Total params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,723</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">44,878,723</span> (171.20 MB)
+</pre>
+
+
+
+
+<pre style="white-space:pre;overflow-x:auto;line-height:normal;font-family:Menlo,'DejaVu Sans Mono',consolas,'Courier New',monospace"><span style="font-weight: bold"> Non-trainable params: </span><span style="color: #00af00; text-decoration-color: #00af00">0</span> (0.00 B)
+</pre>
+
+
+
+    None
+    
+
+
+```python
+##################################
+# Creating a gradient model for the
+# gradient class activation map
+# of the first convolutional layer
+##################################
+grad_model_first_conv2d = Model(inputs=fmodel_input_layer, outputs=[fmodel_conv2d_layer, fmodel_output_layer], name="model_dr_fapi_first_conv2d")
+set_seed()
+grad_model_first_conv2d.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=[Recall()])
+```
+
+
+```python
+##################################
 # Defining a function
-# to gather the model layer information
-# and formulate the gradient class activation map
+# to formulate the gradient class activation map
 # from the output of the first convolutional layer
 ##################################
-def make_gradcam_heatmap(img_array, model, pred_index=None):
-    
-    grad_model = Model(inputs=model.inputs, outputs=[model.layers[0].output, model.output])
-
+def make_gradcam_heatmap(img_array, pred_index=None):
     with tf.GradientTape() as tape:
-        last_conv_layer_output, preds = grad_model(img_array)
+        last_conv_layer_output, preds = grad_model_first_conv2d(img_array)
         if pred_index is None:
             pred_index = tf.argmax(preds[0])
         class_channel = preds[:, pred_index]
@@ -4186,16 +4369,16 @@ def make_gradcam_heatmap(img_array, model, pred_index=None):
 # and superimpose on the actual image
 ##################################
 def gradCAMImage(image):
-    path = f"C:/Users/John pauline magno/Python Notebooks/COVID-19_Radiography_Dataset/{image}"
+    path = (os.path.join("..", DATASETS_ORIGINAL_PATH, image))
     img = readImage(path)
     img = np.expand_dims(img,axis=0)
-    heatmap, preds = make_gradcam_heatmap(img, model_bnr)
+    heatmap, preds = make_gradcam_heatmap(img)
 
     img = load_img(path)
     img = img_to_array(img)
     heatmap = np.uint8(255 * heatmap)
 
-    jet = plt.colormaps["jet"]
+    jet = plt.colormaps["turbo"]
 
     jet_colors = jet(np.arange(256))[:, :3]
     jet_heatmap = jet_colors[heatmap]
@@ -4204,7 +4387,7 @@ def gradCAMImage(image):
     jet_heatmap = jet_heatmap.resize((img.shape[1], img.shape[0]))
     jet_heatmap = tf.keras.preprocessing.image.img_to_array(jet_heatmap)
 
-    superimposed_img = jet_heatmap * 0.8 + img
+    superimposed_img = jet_heatmap * 0.80 + img
     superimposed_img = tf.keras.preprocessing.image.array_to_img(superimposed_img)
     
     return superimposed_img
@@ -4286,7 +4469,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 
 
     
-![png](output_162_0.png)
+![png](output_165_0.png)
     
 
 
@@ -4304,24 +4487,32 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
     
-![png](output_163_0.png)
+![png](output_166_0.png)
     
 
 
 
 ```python
 ##################################
+# Creating a gradient model for the
+# gradient class activation map
+# of the second convolutional layer
+##################################
+grad_model_second_conv2d = Model(inputs=fmodel_input_layer, outputs=[fmodel_conv2d_1_layer, fmodel_output_layer], name="model_dr_fapi_second_conv2d")
+set_seed()
+grad_model_second_conv2d.compile(loss='categorical_crossentropy', optimizer=Adam(), metrics=[Recall()])
+```
+
+
+```python
+##################################
 # Defining a function
-# to gather the model layer information
-# and formulate the gradient class activation map
+# to formulate the gradient class activation map
 # from the output of the second convolutional layer
 ##################################
-def make_gradcam_heatmap(img_array, model, pred_index=None):
-    
-    grad_model = Model(inputs=model.inputs, outputs=[model.layers[2].output, model.output])
-
+def make_gradcam_heatmap(img_array, pred_index=None):    
     with tf.GradientTape() as tape:
-        last_conv_layer_output, preds = grad_model(img_array)
+        last_conv_layer_output, preds = grad_model_second_conv2d(img_array)
         if pred_index is None:
             pred_index = tf.argmax(preds[0])
         class_channel = preds[:, pred_index]
@@ -4374,7 +4565,7 @@ display_heatmaps(matched_categories, matched_categories_titles)
 
 
     
-![png](output_167_0.png)
+![png](output_171_0.png)
     
 
 
@@ -4392,14 +4583,14 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 
     
-![png](output_168_0.png)
+![png](output_172_0.png)
     
 
 
 # 2. Summary <a class="anchor" id="Summary"></a>
 
 
-**A convolutional neural network model applied with batch normalization provided a set of robust and reliable predictions for classifying x-ray images into the normal, viral pneumonia, and COVID categories – predominantly characterized by low-level features including edges and textures; and mid to high-level features including shapes and patterns. The gradient-weighted class activation maps for  the convolutional layers highlighted image features that enabled the activation of the different image categories as follows:**
+**A convolutional neural network model applied with dropout regularization provided a set of robust and reliable predictions for classifying x-ray images into the normal, viral pneumonia, and COVID categories – predominantly characterized by low-level features including edges and textures; and mid to high-level features including shapes and patterns. The gradient-weighted class activation maps for  the convolutional layers highlighted image features that enabled the activation of the different image categories as follows:**
 
 * **Normal**
     * **Clear lung fields**
@@ -4417,9 +4608,9 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 * Multiple convolutional neural network classification (CNN) models were developed with various combinations of regularization techniques namely, **Dropout** for preventing overfitting by randomly dropping out neurons during training, and **Batch Normalization** for standardizing the input of each layer to stabilize and accelerate training. **CNN With No Regularization**, **CNN With Dropout Regularization**, **CNN With Batch Normalization Regularization** and **CNN With Dropout and Batch Normalization Regularization** were formulated to discover hierarchical and spatial representations for image category prediction. Epoch training was optimized through internal resampling validation using **Split-Sample Holdout** with **F1 Score** used as the primary performance metric among **Precision** and **Recall**. All candidate models were compared based on internal and external validation performance.
 
-* The final model selected among candidates used **CNN With Batch Normalization Regularization** defined by 4,4878,979 parameters and 9 sequential layers composed of the following: **Conv2D**: Filters=32, Kernel Size=3x3, Activation=RELU, Padding=Same; **Max_Pooling2D**: Pool Size=2x2, **Conv2D**: Filters=64, Kernel Size=3x3, Activation=RELU, Padding=Same; **Batch Normalization**; **Activation**: Activation=RELU; **Max_Pooling2D**: Pool Size=2x2; **Flatten**; **Dense**: Units=128, Activation=RELU; and **Dense**: Units=3, Activation=SOFTMAX.
+* The final model selected among candidates used **CNN With Dropout Regularization** defined by 44,878,979 parameters and 8 sequential layers composed of the following: **Conv2D**: Filters=32, Kernel Size=3x3, Activation=RELU, Padding=Same; **Max_Pooling2D**: Pool Size=2x2, **Conv2D**: Filters=64, Kernel Size=3x3, Activation=RELU, Padding=Same; **Dropout**: Rate=0.25; **Max_Pooling2D**: Pool Size=2x2; **Flatten**; **Dense**: Units=128, Activation=RELU; and **Dense**: Units=3, Activation=SOFTMAX.
     
-* The final model demonstrated the best externally validated F1 Score determined for all (**F1 Score=0.91, Precision=0.91, Recall=0.91**) and the individual image categories - normal (**F1 Score=0.91, Precision=0.88, Recall=0.95**), viral pneumonia (**F1 Score=0.89, Precision=0.91, Recall=0.88**) and COVID (**F1 Score=0.92, Precision=0.94, Recall=0.90**).
+* The final model demonstrated the best externally validated F1 Score determined for all (**F1 Score=0.92, Precision=0.92, Recall=0.92**) and the individual image categories - normal (**F1 Score=0.91, Precision=0.87, Recall=0.97**), viral pneumonia (**F1 Score=0.92, Precision=0.95, Recall=0.90**) and COVID (**F1 Score=0.93, Precision=0.96, Recall=0.90**).
 
 * Post-hoc exploration of the model results involved **Convolutional Layer Filter Visualization** and **Gradient Class Activation Mapping** methods. Both methods highlighted low-level and high-level image and object features that lead to the activation of the different image categories. These results helped provide insights on the important hierarchical and spatial representations for image category differentiation and model prediction.
 
@@ -4431,17 +4622,19 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 * Including a separate test subset for an independent evaluation of the tuned model
 
 
-![CaseStudy5_Summary_1.png](attachment:e9d30044-2a6e-4310-9149-cf4a147e0cb4.png)
+![CaseStudy5_Summary_0.png](5c21d9e7-afc6-4fcb-9767-b85940bc22c4.png)
 
-![CaseStudy5_Summary_2.png](attachment:dfeb96a1-573b-4226-b480-b8a122ec63c0.png)
+![CaseStudy5_Summary_1.png](5c97c1c6-1b62-4bc4-9f69-3c479dd5bf41.png)
 
-![CaseStudy5_Summary_3.png](attachment:42c50943-0d12-4462-8204-760ea2492edb.png)
+![CaseStudy5_Summary_2.png](cae6df5f-6084-45c3-b642-3447a4c18050.png)
 
-![CaseStudy5_Summary_4.png](attachment:ab2cac98-2ea0-4f16-84b7-42ea1dfc0098.png)
+![CaseStudy5_Summary_3.png](5171d350-ee9a-48a8-9aa1-00a32666bf32.png)
 
-![CaseStudy5_Summary_5.png](attachment:e30bc69a-d0a7-4455-a04a-7ec8990a3d3a.png)
+![CaseStudy5_Summary_4.png](ab48798d-d0b2-40c5-aa52-56d9e8f29da7.png)
 
-![CaseStudy5_Summary_6.png](attachment:c770e396-e269-463d-8b95-8c0b82f24999.png)
+![CaseStudy5_Summary_5.png](c4145bd4-6c59-4171-a408-0d3077c59c6c.png)
+
+![CaseStudy5_Summary_6.png](15e8bef5-5911-4729-9d1c-f62459c6948d.png)
 
 # 3. References <a class="anchor" id="References"></a>
 * **[Book]** [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python) by Francois Chollet
