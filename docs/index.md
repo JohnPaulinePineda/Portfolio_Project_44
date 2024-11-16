@@ -10,7 +10,7 @@
         * [1.1.1 Study Objectives](#1.1.1)
         * [1.1.2 Outcome](#1.1.2)
         * [1.1.3 Predictors](#1.1.3)
-    * [1.2 Methodology](#1.1)
+    * [1.2 Methodology](#1.2)
         * [1.2.1 Data Assessment](#1.2.1)
         * [1.2.2 Feature Selection](#1.2.2)
         * [1.2.3 Model Formulation](#1.2.3)
@@ -25,14 +25,14 @@
             * [1.3.3.2 Image Augmentation](#1.3.3.2)
         * [1.3.4 Data Exploration](#1.3.4)
             * [1.3.4.1 Exploratory Data Analysis](#1.3.4.1)
-        * [1.3.5 Model Development](#1.6)
+        * [1.3.5 Model Development](#1.3.5)
             * [1.3.5.1 Premodelling Data Description](#1.3.5.1)
             * [1.3.5.2 CNN With No Regularization](#1.3.5.2)
             * [1.3.5.3 CNN With Dropout Regularization](#1.3.5.3)
             * [1.3.5.4 CNN With Batch Normalization Regularization](#1.3.5.4)
             * [1.3.5.5 CNN With Dropout and Batch Normalization Regularization](#1.3.5.5)
         * [1.3.6 Model Selection](#1.3.6) 
-        * [1.3.7 Model Presentation](#1.3.6)   
+        * [1.3.7 Model Presentation](#1.3.7)   
             * [1.3.7.1 Convolutional Layer Filter Visualization](#1.3.7.1)
             * [1.3.7.2 Gradient-Weighted Class Activation Mapping](#1.3.7.2)
 * [**2. Summary**](#Summary)   
@@ -84,7 +84,7 @@ The analysis endpoint for the study is described below:
 * <span style="color: #FF0000">CLASS</span> (categorical): **Multi-categorical diagnostic classification for the x-ray images** 
 
 
-### 1.1.3 Predictors <a class="anchor" id="1.1.2"></a>
+### 1.1.3 Predictors <a class="anchor" id="1.1.3"></a>
 
 The hierarchical representation of image features enables the network to transform raw pixel data into a meaningful and compact representation, allowing it to make accurate predictions during image classification. The different features automatically learned during the training process are as follows:
 * <span style="color: #FF0000">LOW-LEVEL FEATURES</span> - Edges and textures
@@ -2051,7 +2051,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 125ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 75ms/step
     
 
 
@@ -2477,7 +2477,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 124ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 131ms/step
     
 
 
@@ -2909,7 +2909,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 132ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 135ms/step
     
 
 
@@ -3355,7 +3355,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 136ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 140ms/step
     
 
 
