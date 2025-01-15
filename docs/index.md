@@ -63,7 +63,7 @@ Subsequent analysis and modelling steps involving data understanding, data prepa
 
 ### 1.1.1 Study Objectives <a class="anchor" id="1.1.1"></a>
 
-**The main objective of the study is to develop multiple convolutional neural network classification models that could automatically learn hierarchical features directly from raw pixel data of x-ray images (categorized as Normal, Viral Pneumonia, and COVID-19), while delivering accurate predictions when applied to new unseen data.**
+**The main objective of the study is to develop multiple convolutional neural network classification models that could automatically learn hierarchical features directly from raw pixel data of x-ray images (categorized as Normal, Viral Pneumonia, and COVID-19), while exploring insights.**
 
 Specific objectives are given as follows:
 
@@ -71,9 +71,7 @@ Specific objectives are given as follows:
 
 * Develop multiple convolutional neural network models with regularization measures applied to prevent overfitting and improve the stability of the training process
 
-* Select the final classification model among candidates based on robust performance estimates
-
-* Evaluate the final model performance and generalization ability through external validation in an independent set
+* Select the final classification model among candidates based on internal validation performance estimates
 
 * Conduct a post-hoc exploration of the model results to provide general insights on the importance, contribution and effect of the various hierarchical features to model prediction
 
@@ -118,7 +116,7 @@ Convolutional neural network (CNN) models automatically learn hierarchical repre
 
 [Machine Learning Classification Models](https://nostarch.com/deep-learning-visual-approach) are algorithms that learn to assign predefined categories or labels to input data based on patterns and relationships identified during the training phase. Classification is a supervised learning task, meaning the models are trained on a labeled dataset where the correct output (class or label) is known for each input. Once trained, these models can predict the class of new, unseen instances.
 
-This study implemented both glass-box and black-box classification modelling procedures with simple to complex structures involving moderate to large numbers of model coefficients or mathematical transformations which lacked transparency in terms of the internal processes and weighted factors used in reaching a decision. Models applied in the analysis for predicting the categorical target were the following:
+This study implemented black-box classification modelling procedures with simple to complex structures involving moderate to large numbers of mathematical transformations which lacked transparency in terms of the internal processes and weighted factors used in reaching a decision. Models applied in the analysis for predicting the categorical target were the following:
 
 [Convolutional Neural Network Models](https://www.manning.com/books/deep-learning-with-python) are a neural network architecture specifically designed for image classification and computer vision tasks by automatically learning hierarchical features directly from raw pixel data. The core building block of a CNN is the convolutional layer. Convolution operations apply learnable filters (kernels) to input images to detect patterns such as edges, textures, and more complex structures. The layers systematically learn hierarchical features from low-level (e.g., edges) to high-level (e.g., object parts) as the network deepens. Filters are shared across the entire input space, enabling the model to recognize patterns regardless of their spatial location. After convolutional operations, an activation function is applied element-wise to introduce non-linearity and allow the model to learn complex relationships between features. Pooling layers downsample the spatial dimensions of the feature maps, reducing the computational load and the number of parameters in the network - creating spatial hierarchy and translation invariance. Fully connected layers process the flattened features to make predictions and produce an output vector that corresponds to class probabilities using an activation function. The CNN is trained using backpropagation and optimization algorithms. A loss function is used to measure the difference between predicted and actual labels. The network adjusts its weights to minimize this loss. Gradients are calculated with respect to the loss, and the weights are updated accordingly through a backpropagation mechanism.
 
@@ -643,13 +641,14 @@ xray_images.isnull().sum()
 #### 1.3.3.1 Image Description <a class="anchor" id="1.3.3.1"></a>
 
 1. Each image contains 3 channels:
-    * 1.1 Red channel pixel value range = 0 to 255
-    * 1.2 Blue channel pixel value range = 0 to 255
-    * 1.3 Green channel pixel value range = 0 to 255
-2. Each images is in gray scale indicating that the values for each individual channel are exactly the same.
-    * 2.1 Image height = 299 pixels
-    * 2.2 Image width = 299 pixels
-    * 2.3 Image size = 268203 pixels
+    * Red channel pixel value range = 0 to 255
+    * Blue channel pixel value range = 0 to 255
+    * Green channel pixel value range = 0 to 255
+2. Each image is in gray scale indicating that the values for each individual channel are exactly the same.
+    * Image height = 299 pixels
+    * Image width = 299 pixels
+    * Image size = 268203 pixels
+
 
 
 ```python
@@ -993,15 +992,16 @@ display(image.min())
 #### 1.3.3.2 Image Augmentation <a class="anchor" id="1.3.3.2"></a>
 
 1. Different image augmentation techniques were applied using various transformations to the training images to artificially increase the diversity of the dataset and improve the generalization and robustness of the model, including:
-    * 1.1 **Rescaling** - normalization of the pixel values within the 0 to 1 range
-    * 1.2 **Rotation** - random image rotation by 5 degrees
-    * 1.3 **Width Shift** - random horizontal shifting of the image by 5% of the total width
-    * 1.4 **Height Shift** - random vertical shifting of the image by 5% of the total height
-    * 1.7 **Shear Transformation** - image slanting by 5 degrees along the horizontal axis.
-    * 1.8 **Zooming** - random image zoom-in or zoom-out by a factor of 5%
+    * **Rescaling** - normalization of the pixel values within the 0 to 1 range
+    * **Rotation** - random image rotation by 5 degrees
+    * **Width Shift** - random horizontal shifting of the image by 5% of the total width
+    * **Height Shift** - random vertical shifting of the image by 5% of the total height
+    * **Shear Transformation** - image slanting by 5 degrees along the horizontal axis.
+    * **Zooming** - random image zoom-in or zoom-out by a factor of 5%
 2. Other image augmentation techniques were not applied to minimize noise in the dataset, including:
-    * 1.5 **Horizontal Flip** - random horizontal flipping of the image
-    * 1.6 **Vertical Flip** - random vertical flipping of the image
+    * **Horizontal Flip** - random horizontal flipping of the image
+    * **Vertical Flip** - random vertical flipping of the image
+
 
 
 ```python
@@ -1083,7 +1083,7 @@ plt.show()
 ```python
 ##################################
 # Creating subsets of images
-# for model validation
+# for model internal validation
 # setting the parameters for
 # real-time data augmentation
 # at each epoch
@@ -1112,7 +1112,7 @@ test_gen = test_datagen.flow_from_directory(directory=path,
 ```python
 ##################################
 # Loading samples of original images
-# for the validation set
+# for the internal validation set
 ##################################
 images, labels = next(test_gen)
 fig, axes = plt.subplots(1, 5, figsize=(15, 3))
@@ -1134,18 +1134,19 @@ plt.show()
 #### 1.3.4.1 Exploratory Data Analysis <a class="anchor" id="1.3.4.1"></a>
 
 1. Distinct patterns were observed between the image categories.
-    * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
-        * 1.1.1 Higher mean pixel values indicating generally lighter images
-        * 1.1.2 Bimodal and wider distribution of maximum pixel values indicating a higher variation in highest possible values
-        * 1.1.3 Wider range of image pixel standard deviation indicating a higher variation in contrast
-    * 1.2 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
-        * 1.2.1 Higher mean pixel values indicating generally lighter images
-        * 1.2.2 Bimodal and wider distribution of maximum pixel values indicating a higher variation in highest possible values
-        * 1.2.3 Wider range of image pixel standard deviation indicating a higher variation in contrast
-    * 1.3 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
-        * 1.3.1 Lower mean pixel values indicating generally darker images
-        * 1.3.2 Unimodal and steeper distribution of maximum pixel values indicating more stable highest possible values
-        * 1.3.3 Compact range of image pixel standard deviation indicating images with stable and sufficient contrast
+    * Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
+        * Higher mean pixel values indicating generally lighter images
+        * Bimodal and wider distribution of maximum pixel values indicating a higher variation in highest possible values
+        * Wider range of image pixel standard deviation indicating a higher variation in contrast
+    * Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
+        * Higher mean pixel values indicating generally lighter images
+        * Bimodal and wider distribution of maximum pixel values indicating a higher variation in highest possible values
+        * Wider range of image pixel standard deviation indicating a higher variation in contrast
+    * Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
+        * Lower mean pixel values indicating generally darker images
+        * Unimodal and steeper distribution of maximum pixel values indicating more stable highest possible values
+        * Compact range of image pixel standard deviation indicating images with stable and sufficient contrast
+          
 
 
 ```python
@@ -1788,25 +1789,26 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 1. Training data included **2880 augmented images** representing 80% of the dataset.
 2. Validation data included **720 original images** representing 20% of the dataset.
 3. Candidate models were formulated using common layers as follows:
-    * 3.1 **Convolutional Layer** - extracts features from input images using convolutional filters
-    * 3.2 **Maximum Pooling Layer** - Reduces spatial dimensions and downsamples feature maps
-    * 3.3 **Activation Layer** - Applies an activation function element-wise to the output
-    * 3.4 **Flatten Layer** - Flattens the input to a 1D array, preparing for fully connected layers
-    * 3.5 **Dense Layer** - Fully connected layer for classification
+    * **Convolutional Layer** - extracts features from input images using convolutional filters
+    * **Maximum Pooling Layer** - Reduces spatial dimensions and downsamples feature maps
+    * **Activation Layer** - Applies an activation function element-wise to the output
+    * **Flatten Layer** - Flattens the input to a 1D array, preparing for fully connected layers
+    * **Dense Layer** - Fully connected layer for classification
 4. Different iterations of the model were formulated using variations in the inclusion or exclusion of the following regularization layers:
-    * 4.1 **Dropout Layer** - randomly drops (sets to zero) a fraction of the neurons during training reducing co-dependencies between them
-    * 4.2 **Batch Normalization Layer** - adjusts and scales the inputs to a layer reducing the sensitivity to weight initialization choices
+    * **Dropout Layer** - randomly drops (sets to zero) a fraction of the neurons during training reducing co-dependencies between them
+    * **Batch Normalization Layer** - adjusts and scales the inputs to a layer reducing the sensitivity to weight initialization choices
 5. A subset of hyperparameters for the different layers were fixed during model training including:
-    * 5.1 **Filters** - setting used to capture spatial hierarchies and features in the input images
-    * 5.2 **Kernel Size** - setting used to define the local region the convolutional layer considers when processing the input
-    * 5.3 **Activation** - setting used to introduce non-linearity into the model, enabling it to learn complex relationships in the data
-    * 5.4 **Pool Size** - setting used to reduce the spatial dimensions of the feature maps to focus on the most important features
-    * 5.5 **Padding** - setting used to control the spatial size and shape for every convolutional operation at each stage
-    * 5.6 **Dense Units** - setting used to process the flattened feature maps and determine the dimensionality of the output space
-    * 5.7 **Optimizer** - setting used to determine how the model's weights are updated during training
-    * 5.8 **Learning Rate** - setting used to determine the step size at each iteration during optimization
-    * 5.9 **Batch Size** - setting used to determine how many samples are used in each iteration of training
-    * 5.10 **Loss** - setting used to define the objective that the model seeks to minimize during training
+    * **Filters** - setting used to capture spatial hierarchies and features in the input images
+    * **Kernel Size** - setting used to define the local region the convolutional layer considers when processing the input
+    * **Activation** - setting used to introduce non-linearity into the model, enabling it to learn complex relationships in the data
+    * **Pool Size** - setting used to reduce the spatial dimensions of the feature maps to focus on the most important features
+    * **Padding** - setting used to control the spatial size and shape for every convolutional operation at each stage
+    * **Dense Units** - setting used to process the flattened feature maps and determine the dimensionality of the output space
+    * **Optimizer** - setting used to determine how the model's weights are updated during training
+    * **Learning Rate** - setting used to determine the step size at each iteration during optimization
+    * **Batch Size** - setting used to determine how many samples are used in each iteration of training
+    * **Loss** - setting used to define the objective that the model seeks to minimize during training
+   
 
 #### 1.3.5.2 CNN With No Regularization <a class="anchor" id="1.3.5.2"></a>
           
@@ -1860,7 +1862,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
     * <span style="color: #FF0000">Dense: dense_1</span>
         * output size = 3
         * number of parameters = 387
-5. The model performance on the validation set for all image categories is summarized as follows:
+5. The model performance on the internal validation set for all image categories is summarized as follows:
     * **Precision** = 0.9202
     * **Recall** = 0.9125
     * **F1 Score** = 0.9129
@@ -1870,7 +1872,7 @@ for x0, y0, path in zip(DF_sample['Max'], DF_sample['StDev'],paths):
 ##################################
 # Defining a function for
 # plotting the loss profile
-# of the training and validation sets
+# of the training and internal validation sets
 #################################
 def plot_training_history(history, model_name):
     plt.figure(figsize=(10,6))
@@ -2046,12 +2048,12 @@ model_nr_history = model_nr.fit(train_gen,
 ##################################
 # Evaluating the model
 # for CNN with no regularization
-# on the independent validation set
+# on the internal validation set
 ##################################
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m3s[0m 75ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 117ms/step
     
 
 
@@ -2059,7 +2061,7 @@ model_nr_y_pred = model_nr.predict(test_gen)
 ##################################
 # Plotting the loss profile
 # for CNN with no regularization
-# on the training and validation sets
+# on the training and internal validation sets
 ##################################
 plot_training_history(model_nr_history, 'CNN With No Regularization : ')
 ```
@@ -2075,7 +2077,7 @@ plot_training_history(model_nr_history, 'CNN With No Regularization : ')
 ##################################
 # Consolidating the predictions
 # for CNN with no regularization
-# on the validation set
+# on the internal validation set
 ##################################
 model_nr_predictions = np.array(list(map(lambda x: np.argmax(x), model_nr_y_pred)))
 model_nr_y_true = test_gen.classes
@@ -2083,14 +2085,14 @@ model_nr_y_true = test_gen.classes
 ##################################
 # Formulating the confusion matrix
 # for CNN with no regularization
-# on the validation set
+# on the internal validation set
 ##################################
 CMatrix = pd.DataFrame(confusion_matrix(model_nr_y_true, model_nr_predictions), columns=classes, index =classes)
 
 ##################################
 # Plotting the confusion matrix
 # for CNN with no regularization
-# on the validation set
+# on the internal validation set
 ##################################
 plt.figure(figsize=(10, 6))
 ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
@@ -2098,7 +2100,7 @@ ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
 ax.set_yticklabels(ax.get_yticklabels(),rotation =0)
-ax.set_title('CNN With No Regularization : Validation Set Confusion Matrix',fontsize = 14, weight = 'bold',pad=20);
+ax.set_title('CNN With No Regularization : Internal Validation Set Confusion Matrix',fontsize = 14, weight = 'bold',pad=20);
 
 ##################################
 # Resetting all states generated by Keras
@@ -2121,7 +2123,7 @@ keras.backend.clear_session()
 ##################################
 # Calculating the model accuracy
 # for CNN with no regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_nr_acc = accuracy_score(model_nr_y_true, model_nr_predictions)
 
@@ -2129,7 +2131,7 @@ model_nr_acc = accuracy_score(model_nr_y_true, model_nr_predictions)
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with no regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_nr_results_all = precision_recall_fscore_support(model_nr_y_true, model_nr_predictions, average='macro',zero_division = 1)
 
@@ -2137,7 +2139,7 @@ model_nr_results_all = precision_recall_fscore_support(model_nr_y_true, model_nr
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with no regularization
-# for each category of the validation set
+# for each category of the internal validation set
 ##################################
 model_nr_results_class = precision_recall_fscore_support(model_nr_y_true, model_nr_predictions, average=None, zero_division = 1)
 
@@ -2299,7 +2301,7 @@ model_nr_all_summary = pd.DataFrame(zip(model_nr_model_list,
     * <span style="color: #FF0000">Dense: dense_1</span>
         * output size = 3
         * number of parameters = 387
-5. The model performance on the validation set for all image categories is summarized as follows:
+5. The model performance on the internal validation set for all image categories is summarized as follows:
     * **Precision** = 0.9242
     * **Recall** = 0.9208
     * **F1 Score** = 0.9210
@@ -2472,12 +2474,12 @@ model_dr_history = model_dr.fit(train_gen,
 ##################################
 # Evaluating the model
 # for CNN with dropout regularization
-# on the independent validation set
+# on the internal validation set
 ##################################
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 131ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 114ms/step
     
 
 
@@ -2485,7 +2487,7 @@ model_dr_y_pred = model_dr.predict(test_gen)
 ##################################
 # Plotting the loss profile
 # for CNN with dropout regularization
-# on the training and validation sets
+# on the training and internal validation sets
 ##################################
 plot_training_history(model_dr_history, 'CNN With Dropout Regularization : ')
 ```
@@ -2501,7 +2503,7 @@ plot_training_history(model_dr_history, 'CNN With Dropout Regularization : ')
 ##################################
 # Consolidating the predictions
 # for CNN with dropout regularization
-# on the validation set
+# on the internal validation set
 ##################################
 model_dr_predictions = np.array(list(map(lambda x: np.argmax(x), model_dr_y_pred)))
 model_dr_y_true=test_gen.classes
@@ -2509,7 +2511,7 @@ model_dr_y_true=test_gen.classes
 ##################################
 # Formulating the confusion matrix
 # for CNN with dropout regularization
-# on the validation set
+# on the internal validation set
 ##################################
 CMatrix = pd.DataFrame(confusion_matrix(model_dr_y_true, model_dr_predictions), columns=classes, index =classes)
 
@@ -2517,7 +2519,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_dr_y_true, model_dr_predictions), 
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with dropout regularization
-# for each category of the validation set
+# for each category of the internal validation set
 ##################################
 plt.figure(figsize=(10, 6))
 ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250, cmap = 'icefire')
@@ -2525,7 +2527,7 @@ ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
 ax.set_yticklabels(ax.get_yticklabels(),rotation =0)
-ax.set_title('CNN With Dropout Regularization : Validation Set Confusion Matrix',fontsize = 14, weight = 'bold', pad=20);
+ax.set_title('CNN With Dropout Regularization : Internal Validation Set Confusion Matrix',fontsize = 14, weight = 'bold', pad=20);
 
 ##################################
 # Resetting all states generated by Keras
@@ -2544,7 +2546,7 @@ keras.backend.clear_session()
 ##################################
 # Calculating the model accuracy
 # for CNN with dropout regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_dr_acc = accuracy_score(model_dr_y_true, model_dr_predictions)
 
@@ -2552,7 +2554,7 @@ model_dr_acc = accuracy_score(model_dr_y_true, model_dr_predictions)
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with dropout regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_dr_results_all = precision_recall_fscore_support(model_dr_y_true, model_dr_predictions, average='macro',zero_division = 1)
 
@@ -2560,7 +2562,7 @@ model_dr_results_all = precision_recall_fscore_support(model_dr_y_true, model_dr
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with dropout regularization
-# for each category of the validation set
+# for each category of the internal validation set
 ##################################
 model_dr_results_class = precision_recall_fscore_support(model_dr_y_true, model_dr_predictions, average=None, zero_division = 1)
 
@@ -2726,7 +2728,7 @@ model_dr_all_summary = pd.DataFrame(zip(model_dr_model_list,
     * <span style="color: #FF0000">Dense: dense_1</span>
         * output size = 3
         * number of parameters = 387
-5. The model performance on the validation set for all image categories is summarized as follows:
+5. The model performance on the internal validation set for all image categories is summarized as follows:
     * **Precision** = 0.9107
     * **Recall** = 0.9083
     * **F1 Score** = 0.9081
@@ -2904,12 +2906,12 @@ model_bnr_history = model_bnr.fit(train_gen,
 ##################################
 # Evaluating the model
 # for CNN with batch normalization regularization
-# on the independent validation set
+# on the internal validation set
 ##################################
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 135ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 126ms/step
     
 
 
@@ -2917,7 +2919,7 @@ model_bnr_y_pred = model_bnr.predict(test_gen)
 ##################################
 # Plotting the loss profile
 # for CNN with batch normalization regularization
-# on the training and validation sets
+# on the training and internal validation sets
 ##################################
 plot_training_history(model_bnr_history, 'CNN With Batch Normalization Regularization : ')
 ```
@@ -2933,7 +2935,7 @@ plot_training_history(model_bnr_history, 'CNN With Batch Normalization Regulariz
 ##################################
 # Consolidating the predictions
 # for CNN with batch normalization regularization
-# on the validation set
+# on the internal validation set
 ##################################
 model_bnr_predictions = np.array(list(map(lambda x: np.argmax(x), model_bnr_y_pred)))
 model_bnr_y_true = test_gen.classes
@@ -2941,7 +2943,7 @@ model_bnr_y_true = test_gen.classes
 ##################################
 # Formulating the confusion matrix
 # for CNN with batch normalization regularization
-# on the validation set
+# on the internal validation set
 ##################################
 CMatrix = pd.DataFrame(confusion_matrix(model_bnr_y_true, model_bnr_predictions), columns=classes, index =classes)
 
@@ -2949,7 +2951,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_bnr_y_true, model_bnr_predictions)
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with batch normalization regularization
-# for each category of the validation set
+# for each category of the internal validation set
 ##################################
 plt.figure(figsize=(10, 6))
 ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
@@ -2957,7 +2959,7 @@ ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
 ax.set_yticklabels(ax.get_yticklabels(),rotation =0)
-ax.set_title('CNN With Batch Normalization Regularization : Validation Set Confusion Matrix',fontsize = 16,weight = 'bold',pad=20);
+ax.set_title('CNN With Batch Normalization Regularization : Internal Validation Set Confusion Matrix',fontsize = 16,weight = 'bold',pad=20);
 
 ##################################
 # Resetting all states generated by Keras
@@ -2976,7 +2978,7 @@ keras.backend.clear_session()
 ##################################
 # Calculating the model accuracy
 # for CNN with batch normalization regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_bnr_acc = accuracy_score(model_bnr_y_true, model_bnr_predictions)
 
@@ -2984,7 +2986,7 @@ model_bnr_acc = accuracy_score(model_bnr_y_true, model_bnr_predictions)
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with batch normalization regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_bnr_results_all = precision_recall_fscore_support(model_bnr_y_true, model_bnr_predictions, average='macro',zero_division = 1)
 
@@ -2992,7 +2994,7 @@ model_bnr_results_all = precision_recall_fscore_support(model_bnr_y_true, model_
 # Calculating the model 
 # Precision, Recall, F-score and Support
 # for CNN with batch normalization regularization
-# for each category of the validation set
+# for each category of the internal validation set
 ##################################
 model_bnr_results_class = precision_recall_fscore_support(model_bnr_y_true, model_bnr_predictions, average=None, zero_division = 1)
 
@@ -3163,7 +3165,7 @@ model_bnr_all_summary = pd.DataFrame(zip(model_bnr_model_list,
     * <span style="color: #FF0000">Dense: dense_1</span>
         * output size = 3
         * number of parameters = 387
-5. The model performance on the validation set for all classes is summarized as follows:
+5. The model performance on the internal validation set for all classes is summarized as follows:
     * **Precision** = 0.9182
     * **Recall** = 0.9166
     * **F1 Score** = 0.9167
@@ -3350,12 +3352,12 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 # Evaluating the model
 # for CNN with dropout and
 # batch normalization regularization
-# on the independent validation set
+# on the internal validation set
 ##################################
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 140ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 124ms/step
     
 
 
@@ -3364,7 +3366,7 @@ model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 # Plotting the loss profile
 # for CNN with dropout and
 # batch normalization regularization
-# on the training and validation sets
+# on the training and internal validation sets
 ##################################
 plot_training_history(model_dr_bnr_history, 'CNN With Dropout and Batch Normalization Regularization : ')
 ```
@@ -3381,7 +3383,7 @@ plot_training_history(model_dr_bnr_history, 'CNN With Dropout and Batch Normaliz
 # Consolidating the predictions
 # for CNN with dropout and
 # batch normalization regularization
-# on the validation set
+# on the internal validation set
 ##################################
 model_dr_bnr_predictions = np.array(list(map(lambda x: np.argmax(x), model_dr_bnr_y_pred)))
 model_dr_bnr_y_true = test_gen.classes
@@ -3390,7 +3392,7 @@ model_dr_bnr_y_true = test_gen.classes
 # Formulating the confusion matrix
 # for CNN with dropout and
 # batch normalization regularization
-# on the validation set
+# on the internal validation set
 ##################################
 CMatrix = pd.DataFrame(confusion_matrix(model_dr_bnr_y_true, model_dr_bnr_predictions), columns=classes, index =classes)
 
@@ -3399,7 +3401,7 @@ CMatrix = pd.DataFrame(confusion_matrix(model_dr_bnr_y_true, model_dr_bnr_predic
 # Precision, Recall, F-score and Support
 # for CNN with dropout and
 # batch normalization regularization
-# for each category of the validation set
+# for each category of the internal validation set
 ##################################
 plt.figure(figsize=(10, 6))
 ax = sns.heatmap(CMatrix, annot = True, fmt = 'g' ,vmin = 0, vmax = 250,cmap = 'icefire')
@@ -3407,7 +3409,7 @@ ax.set_xlabel('Predicted',fontsize = 14,weight = 'bold')
 ax.set_xticklabels(ax.get_xticklabels(),rotation =0)
 ax.set_ylabel('Actual',fontsize = 14,weight = 'bold') 
 ax.set_yticklabels(ax.get_yticklabels(),rotation =0)
-ax.set_title('CNN With Dropout and Batch Normalization Regularization : Validation Set Confusion Matrix',fontsize = 16,weight = 'bold',pad=20);
+ax.set_title('CNN With Dropout and Batch Normalization Regularization : Internal Validation Set Confusion Matrix',fontsize = 16,weight = 'bold',pad=20);
 
 ##################################
 # Resetting all states generated by Keras
@@ -3427,7 +3429,7 @@ keras.backend.clear_session()
 # Calculating the model accuracy
 # for CNN with dropout and
 # batch normalization regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_dr_bnr_acc = accuracy_score(model_dr_bnr_y_true, model_dr_bnr_predictions)
 
@@ -3436,7 +3438,7 @@ model_dr_bnr_acc = accuracy_score(model_dr_bnr_y_true, model_dr_bnr_predictions)
 # Precision, Recall, F-score and Support
 # for CNN with dropout and
 # batch normalization regularization
-# for the entire validation set
+# for the entire internal validation set
 ##################################
 model_dr_bnr_results_all = precision_recall_fscore_support(model_dr_bnr_y_true, model_dr_bnr_predictions, average='macro',zero_division = 1)
 
@@ -3445,7 +3447,7 @@ model_dr_bnr_results_all = precision_recall_fscore_support(model_dr_bnr_y_true, 
 # Precision, Recall, F-score and Support
 # for CNN with dropout and
 # batch normalization regularization
-# for each category of the validation set
+# for each category of the internal validation set
 ##################################
 model_dr_bnr_results_class = precision_recall_fscore_support(model_dr_bnr_y_true, model_dr_bnr_predictions, average=None, zero_division = 1)
 
@@ -3555,29 +3557,33 @@ model_dr_bnr_all_summary = pd.DataFrame(zip(model_dr_bnr_model_list,
 
 ### 1.3.6 Model Selection <a class="anchor" id="1.3.6"></a>
 
-1. The **CNN Model With No Regularization** demonstrated the following validation set performance for all image categories:
+1. The **CNN Model With No Regularization** demonstrated the following internal validation set performance for all image categories:
     * **Precision** = 0.9202
     * **Recall** = 0.9125
     * **F1 Score** = 0.9129    
-2. The **CNN Model With Dropout Regularization** demonstrated the following validation set performance for all image categories:
+2. The **CNN Model With Dropout Regularization** demonstrated the following internal validation set performance for all image categories:
     * **Precision** = 0.9242
     * **Recall** = 0.9208
     * **F1 Score** = 0.9210
-3. The **CNN Model With Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
+3. The **CNN Model With Batch Normalization Regularization** demonstrated the following internal validation set performance for all image categories:
     * **Precision** = 0.9107
     * **Recall** = 0.9083
     * **F1 Score** = 0.9081
-4. The **CNN Model With Dropout and Batch Normalization Regularization** demonstrated the following validation set performance for all image categories:
+4. The **CNN Model With Dropout and Batch Normalization Regularization** demonstrated the following internal validation set performance for all image categories:
     * **Precision** = 0.9182
     * **Recall** = 0.9166
     * **F1 Score** = 0.9167
-5. The **CNN Model With Dropout Regularization** had the best validation set performance and was selected among all candidate models.
+5. The **CNN Model With Dropout Regularization** had the best internal validation set performance and was selected among all candidate models.
     * **Precision** = 0.9242
     * **Recall** = 0.9208
     * **F1 Score** = 0.9210
 6. While the classification results have been sufficiently high, the current study can be further extended to achieve optimal model performance through the following:
     * Conduct model hyperparameter tuning given sufficient analysis time and higher computing power
     * Formulate deeper neural network architectures to better capture spatial hierarchies and features in the input images
+    * Implement callback functions to automate training adjustments, reduce human intervention, and enhance both training efficiency and model performance
+        * Use **Early Stopping** to halt training when the validation performance stops improving, preventing overfitting and saving computational resources
+        * Use **Learning Rate Reduction on Performance Plateaus** to automatically adjust the learning rate when the validation loss plateaus, allowing for better convergence
+        * Use **Model Checkpointing** to ensure that the model is saved at its best performance, even if subsequent epochs result in overfitting
     * Apply various techniques to interpret the CNN models by understanding and visualizing the features and decisions made at each layer 
     * Consider an imbalanced dataset and apply remedial measures to address unbalanced classification to accurately reflect real-world scenario
     
@@ -3694,7 +3700,7 @@ cnn_model_performance_comparison_precision_plot
 ##################################
 cnn_model_performance_comparison_precision_plot = cnn_model_performance_comparison_precision_plot.plot.barh(figsize=(10, 6), width=0.90)
 cnn_model_performance_comparison_precision_plot.set_xlim(0.00,1.00)
-cnn_model_performance_comparison_precision_plot.set_title("Model Comparison by Precision Performance on Validation Data")
+cnn_model_performance_comparison_precision_plot.set_title("Model Comparison by Precision Performance on Internal Validation Data")
 cnn_model_performance_comparison_precision_plot.set_xlabel("Precision Performance")
 cnn_model_performance_comparison_precision_plot.set_ylabel("Image Categories")
 cnn_model_performance_comparison_precision_plot.grid(False)
@@ -3808,7 +3814,7 @@ cnn_model_performance_comparison_recall_plot
 ##################################
 cnn_model_performance_comparison_recall_plot = cnn_model_performance_comparison_recall_plot.plot.barh(figsize=(10, 6), width=0.90)
 cnn_model_performance_comparison_recall_plot.set_xlim(0.00,1.00)
-cnn_model_performance_comparison_recall_plot.set_title("Model Comparison by Recall Performance on Validation Data")
+cnn_model_performance_comparison_recall_plot.set_title("Model Comparison by Recall Performance on Internal Validation Data")
 cnn_model_performance_comparison_recall_plot.set_xlabel("Recall Performance")
 cnn_model_performance_comparison_recall_plot.set_ylabel("Image Categories")
 cnn_model_performance_comparison_recall_plot.grid(False)
@@ -3922,7 +3928,7 @@ cnn_model_performance_comparison_fscore_plot
 ##################################
 cnn_model_performance_comparison_fscore_plot = cnn_model_performance_comparison_fscore_plot.plot.barh(figsize=(10, 6), width=0.90)
 cnn_model_performance_comparison_fscore_plot.set_xlim(0.00,1.00)
-cnn_model_performance_comparison_fscore_plot.set_title("Model Comparison by F-Score Performance on Validation Data")
+cnn_model_performance_comparison_fscore_plot.set_title("Model Comparison by F-Score Performance on Internal Validation Data")
 cnn_model_performance_comparison_fscore_plot.set_xlabel("F-Score Performance")
 cnn_model_performance_comparison_fscore_plot.set_ylabel("Image Categories")
 cnn_model_performance_comparison_fscore_plot.grid(False)
@@ -3993,25 +3999,25 @@ plt.show()
 #### 1.3.7.2 Gradient-Weighted Class Activation Mapping <a class="anchor" id="1.3.7.2"></a>
 
 1. The gradient-weighted class activation map for  the first convolutional layer of the selected model - **CNN Model With Dropout Regularization** highlighted general image features that lead to the activation of the different image categories.
-    * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
-        * 1.1.1 Denser intensity for the part of the image pertaining to the lung
-        * 1.1.2 Relatively invisible outlines for the part of the image pertaining to the bronchial structure
-    * 1.2 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
-        * 1.2.1 Denser intensity for the part of the image pertaining to the lung
-        * 1.2.2 Clearly visible outlines for the part of the image pertaining to the bronchial structure
-    * 1.3 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
-        * 1.3.1 Hazy intensity for the part of the image pertaining to the lung
-        * 1.3.2 Relatively visible outlines for the part of the image pertaining to the bronchial structure
+    * Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
+        * Denser intensity for the part of the image pertaining to the lung
+        * Relatively invisible outlines for the part of the image pertaining to the bronchial structure
+    * Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
+        * Denser intensity for the part of the image pertaining to the lung
+        * Clearly visible outlines for the part of the image pertaining to the bronchial structure
+    * Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
+        * Hazy intensity for the part of the image pertaining to the lung
+        * Relatively visible outlines for the part of the image pertaining to the bronchial structure
 2. The gradient-weighted class activation map for  the second and final convolutional layer of the selected model - **CNN Model With Dropout Regularization** highlighted specific image features that lead to the activation of the different image categories.
-    * 1.1 Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
-        * 1.1.1 Lung fields appeared patchy and multifocal
-        * 1.1.2 Pulmonary vessels and bronchial structures are not clearly visible without signs of obstruction or infiltration
-    * 1.2 Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
-        * 1.2.1 Clear lung fields without significant opacities or consolidations
-        * 1.2.2 Pulmonary vessels and bronchial structures are clearly visible without signs of obstruction or infiltration
-    * 1.3 Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
-        * 1.3.1 Lung fields appeared patchy and multifocal
-        * 1.3.2 Pulmonary vessels and bronchial structures are clearly visible but with signs of obstruction or infiltration
+    * Images identified with <span style="color: #FF0000">CLASS: COVID</span> had the following characteristics:
+        * Lung fields appeared patchy and multifocal
+        * Pulmonary vessels and bronchial structures are not clearly visible without signs of obstruction or infiltration
+    * Images identified with <span style="color: #FF0000">CLASS: Normal</span> had the following characteristics:
+        * Clear lung fields without significant opacities or consolidations
+        * Pulmonary vessels and bronchial structures are clearly visible without signs of obstruction or infiltration
+    * Images identified with <span style="color: #FF0000">CLASS: Viral Pneumonia</span> had the following characteristics:
+        * Lung fields appeared patchy and multifocal
+        * Pulmonary vessels and bronchial structures are clearly visible but with signs of obstruction or infiltration
 
 
 
@@ -4154,7 +4160,7 @@ test_gen_df.head(10)
 ```python
 ##################################
 # Formulating image samples
-# from the validation set
+# from the internal validation set
 ##################################
 test_gen_df = test_gen_df.sample(frac=1, replace=False, random_state=123).reset_index(drop=True)
 ```
@@ -4590,7 +4596,7 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 # 2. Summary <a class="anchor" id="Summary"></a>
 
 
-**A convolutional neural network model applied with dropout regularization provided a set of robust and reliable predictions for classifying x-ray images into the normal, viral pneumonia, and COVID categories – predominantly characterized by low-level features including edges and textures; and mid to high-level features including shapes and patterns. The gradient-weighted class activation maps for  the convolutional layers highlighted image features that enabled the activation of the different image categories as follows:**
+**A convolutional neural network model applied with dropout regularization provided a set of sufficiently reliable classification of x-ray images into the normal, viral pneumonia, and COVID categories – predominantly characterized by low-level features including edges and textures; and mid to high-level features including shapes and patterns. The gradient-weighted class activation maps for  the convolutional layers highlighted image features that enabled the activation of the different image categories as follows:**
 
 * **Normal**
     * **Clear lung fields**
@@ -4604,37 +4610,43 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 
 **Overall, a convolutional neural network model architecture is particularly well-suited for learning the hierarchical features and spatial representations directly from raw pixel intensity data of X-ray images which sufficiently captured typical characteristics used in differentiating respiratory conditions in radiology and clinical imaging modalities. By leveraging automated feature extraction and enhanced sensitivity in identifying intricate spatial representations or subtle patterns representing abnormalities in images, convolutional neural network models can assist healthcare professionals in making more accurate diagnoses, enabling timely interventions, and ultimately improving patient outcomes in the management of respiratory conditions.**
 
-* From an initial dataset comprised of 3600 grayscale images, an optimal subset of **7200 observations comprised of 3600 original images and 3600 augmented images** representing three image categories - **Normal**, **Viral Pneumonia** and **COVID** respiratory conditions were determined after conducting data quality assessment and applying preprocessing operations to improve generalization and reduce sensitivity to variations most suitable for the downstream analysis. Hierarchical features from the images were automatically and directly learned using the raw pixel data.
+* From an initial dataset comprised of 3600 grayscale images, **2880 augmented images for training (80%)** and **720 original images for testing (20%)** representing three image categories - **Normal**, **Viral Pneumonia** and **COVID** respiratory conditions were determined after conducting data quality assessment and applying preprocessing operations to improve generalization and reduce sensitivity to variations most suitable for the downstream analysis. Hierarchical features from the images were automatically and directly learned using the raw pixel data.
 
-* Multiple convolutional neural network classification (CNN) models were developed with various combinations of regularization techniques namely, **Dropout** for preventing overfitting by randomly dropping out neurons during training, and **Batch Normalization** for standardizing the input of each layer to stabilize and accelerate training. **CNN With No Regularization**, **CNN With Dropout Regularization**, **CNN With Batch Normalization Regularization** and **CNN With Dropout and Batch Normalization Regularization** were formulated to discover hierarchical and spatial representations for image category prediction. Epoch training was optimized through internal resampling validation using **Split-Sample Holdout** with **F1 Score** used as the primary performance metric among **Precision** and **Recall**. All candidate models were compared based on internal and external validation performance.
+* Since the primary objective of the proposed convolutional neural network model was to gain insights into the features influencing predictions rather than achieving optimal predictive performance, an independent test set was not created as the focus was on analyzing feature importance and interpretability within the data used for training and validation. The internal internal validation set served to ensure the model's functionality and was sufficient for this exploratory purpose.
+
+* Multiple convolutional neural network classification (CNN) models were developed with various combinations of regularization techniques namely, **Dropout** for preventing overfitting by randomly dropping out neurons during training, and **Batch Normalization** for standardizing the input of each layer to stabilize and accelerate training. **CNN With No Regularization**, **CNN With Dropout Regularization**, **CNN With Batch Normalization Regularization** and **CNN With Dropout and Batch Normalization Regularization** were formulated to discover hierarchical and spatial representations for image category prediction. Epoch training was optimized through internal validation using **Split-Sample Holdout** with **F1 Score** used as the primary performance metric among **Precision** and **Recall**. All candidate models were compared based on internal validation performance.
 
 * The final model selected among candidates used **CNN With Dropout Regularization** defined by 44,878,979 parameters and 8 sequential layers composed of the following: **Conv2D**: Filters=32, Kernel Size=3x3, Activation=RELU, Padding=Same; **Max_Pooling2D**: Pool Size=2x2, **Conv2D**: Filters=64, Kernel Size=3x3, Activation=RELU, Padding=Same; **Dropout**: Rate=0.25; **Max_Pooling2D**: Pool Size=2x2; **Flatten**; **Dense**: Units=128, Activation=RELU; and **Dense**: Units=3, Activation=SOFTMAX.
     
-* The final model demonstrated the best externally validated F1 Score determined for all (**F1 Score=0.92, Precision=0.92, Recall=0.92**) and the individual image categories - normal (**F1 Score=0.91, Precision=0.87, Recall=0.97**), viral pneumonia (**F1 Score=0.92, Precision=0.95, Recall=0.90**) and COVID (**F1 Score=0.93, Precision=0.96, Recall=0.90**).
+* The final model demonstrated the best internally validated F1 Score determined for all (**F1 Score=0.92, Precision=0.92, Recall=0.92**) and the individual image categories - normal (**F1 Score=0.91, Precision=0.87, Recall=0.97**), viral pneumonia (**F1 Score=0.92, Precision=0.95, Recall=0.90**) and COVID (**F1 Score=0.93, Precision=0.96, Recall=0.90**).
 
 * Post-hoc exploration of the model results involved **Convolutional Layer Filter Visualization** and **Gradient Class Activation Mapping** methods. Both methods highlighted low-level and high-level image and object features that lead to the activation of the different image categories. These results helped provide insights on the important hierarchical and spatial representations for image category differentiation and model prediction.
 
 **The current results have limitations which can be further addressed by extending the study to include the following actions:**
 * Conducting model hyperparameter tuning given sufficient analysis time and higher computing power
 * Formulating deeper neural network architectures to better capture spatial hierarchies and features in the input images
+* Implementing callback functions to automate training adjustments, reduce human intervention, and enhance both training efficiency and model performance
+    * Using **Early Stopping** to halt training when the validation performance stops improving, preventing overfitting and saving computational resources
+    * Using **Learning Rate Reduction on Performance Plateaus** to automatically adjust the learning rate when the validation loss plateaus, allowing for better convergence
+    * Using **Model Checkpointing** to ensure that the model is saved at its best performance, even if subsequent epochs result in overfitting
 * Applying various techniques to interpret the CNN models by understanding and visualizing the features and decisions made at each layer
 * Considering an imbalanced dataset and applying remedial measures to address unbalanced classification to accurately reflect real-world scenario
 * Including a separate test subset for an independent evaluation of the tuned model
 
 
-![CaseStudy5_Summary_0.png](5c21d9e7-afc6-4fcb-9767-b85940bc22c4.png)
+![CaseStudy5_Summary_0.png](891d3fbd-3e59-4635-85b1-b79c116ed90a.png)
 
-![CaseStudy5_Summary_1.png](5c97c1c6-1b62-4bc4-9f69-3c479dd5bf41.png)
+![CaseStudy5_Summary_1.png](c28f3fd3-6225-4918-8ee9-a9599ef59798.png)
 
-![CaseStudy5_Summary_2.png](cae6df5f-6084-45c3-b642-3447a4c18050.png)
+![CaseStudy5_Summary_2.png](afd79213-2ad5-4453-8776-2b36508e951b.png)
 
-![CaseStudy5_Summary_3.png](5171d350-ee9a-48a8-9aa1-00a32666bf32.png)
+![CaseStudy5_Summary_3.png](c3a9e672-6837-47c4-a8f4-8675a493162c.png)
 
-![CaseStudy5_Summary_4.png](ab48798d-d0b2-40c5-aa52-56d9e8f29da7.png)
+![CaseStudy5_Summary_4.png](0d88bd54-124d-46ab-8503-77a22e30bf89.png)
 
-![CaseStudy5_Summary_5.png](c4145bd4-6c59-4171-a408-0d3077c59c6c.png)
+![CaseStudy5_Summary_5.png](4c815118-ae6b-4679-8ad0-8b57286ec4c3.png)
 
-![CaseStudy5_Summary_6.png](15e8bef5-5911-4729-9d1c-f62459c6948d.png)
+![CaseStudy5_Summary_6.png](5f07f267-8b17-4a90-a239-90ffc3782bc5.png)
 
 # 3. References <a class="anchor" id="References"></a>
 * **[Book]** [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python) by Francois Chollet
