@@ -2053,7 +2053,7 @@ model_nr_history = model_nr.fit(train_gen,
 model_nr_y_pred = model_nr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 117ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 115ms/step
     
 
 
@@ -2479,7 +2479,7 @@ model_dr_history = model_dr.fit(train_gen,
 model_dr_y_pred = model_dr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 114ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m5s[0m 111ms/step
     
 
 
@@ -2911,7 +2911,7 @@ model_bnr_history = model_bnr.fit(train_gen,
 model_bnr_y_pred = model_bnr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 126ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 123ms/step
     
 
 
@@ -3357,7 +3357,7 @@ model_dr_bnr_history = model_dr_bnr.fit(train_gen,
 model_dr_bnr_y_pred = model_dr_bnr.predict(test_gen)
 ```
 
-    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 124ms/step
+    [1m45/45[0m [32m━━━━━━━━━━━━━━━━━━━━[0m[37m[0m [1m6s[0m 121ms/step
     
 
 
@@ -4634,19 +4634,19 @@ display_heatmaps(mismatched_categories, mismatched_categories_titles)
 * Including a separate test subset for an independent evaluation of the tuned model
 
 
-![CaseStudy5_Summary_0.png](891d3fbd-3e59-4635-85b1-b79c116ed90a.png)
+![CaseStudy5_Summary_0.png](c5fb664a-f5a3-473b-a03d-40b4f9cd2075.png)
 
-![CaseStudy5_Summary_1.png](c28f3fd3-6225-4918-8ee9-a9599ef59798.png)
+![CaseStudy5_Summary_1.png](2bfd480f-e9fd-445b-a540-d69c9ce37f5d.png)
 
-![CaseStudy5_Summary_2.png](afd79213-2ad5-4453-8776-2b36508e951b.png)
+![CaseStudy5_Summary_2.png](d06fca23-7556-4aa3-8492-8fad9ed95330.png)
 
-![CaseStudy5_Summary_3.png](c3a9e672-6837-47c4-a8f4-8675a493162c.png)
+![CaseStudy5_Summary_3.png](65e9e10f-e6b3-4898-9216-6986b9cd858d.png)
 
-![CaseStudy5_Summary_4.png](0d88bd54-124d-46ab-8503-77a22e30bf89.png)
+![CaseStudy5_Summary_4.png](dd5dd4b4-3e4b-4998-a6e3-8e34f72cf06f.png)
 
-![CaseStudy5_Summary_5.png](4c815118-ae6b-4679-8ad0-8b57286ec4c3.png)
+![CaseStudy5_Summary_5.png](8c199174-2943-466d-95bb-1edcbe867858.png)
 
-![CaseStudy5_Summary_6.png](5f07f267-8b17-4a90-a239-90ffc3782bc5.png)
+![CaseStudy5_Summary_6.png](9b7c503c-97b0-4b06-b37d-800a4994b010.png)
 
 # 3. References <a class="anchor" id="References"></a>
 * **[Book]** [Deep Learning with Python](https://www.manning.com/books/deep-learning-with-python) by Francois Chollet
